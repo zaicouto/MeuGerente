@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
+using Modules.Orders.Application.DTOs;
 
-namespace Modules.Orders.Application.Commands
+namespace Modules.Orders.Application.Commands;
+
+public class CreateOrderCommand : IRequest<Guid>
 {
-    internal class CreateOrderCommand
-    {
-    }
+    public List<OrderItemDto> Items { get; set; } = [];
 }
