@@ -1,43 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Modules.Orders.Application.Commands;
+using Modules.Orders.Application.Queries;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+namespace API.Controllers;
 
-namespace API.Controllers
+[ApiController]
+[Route("api/orders")]
+public class OrdersController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class OrdersController : ControllerBase
+    private readonly IMediator _mediator;
+
+    public OrdersController(IMediator mediator)
     {
-        // GET: api/<OrdersController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        _mediator = mediator;
+    }
 
-        // GET api/<OrdersController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateOrderCommand command)
+    {
+        var id = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetById), new { id }, null);
+    }
 
-        // POST api/<OrdersController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<OrdersController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<OrdersController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var order = await _mediator.Send(new GetOrderByIdQuery(id));
+        return order == null ? NotFound() : Ok(order);
     }
 }
