@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
+using Modules.Orders.Application.DTOs;
 
-namespace Modules.Orders.Application.Queries
+namespace Modules.Orders.Application.Queries;
+
+public class GetOrderByIdQuery(Guid id) : IRequest<OrderDto>
 {
-    internal class GetOrderByIdQuery
-    {
-    }
+    public Guid Id { get; set; } = id;
 }
