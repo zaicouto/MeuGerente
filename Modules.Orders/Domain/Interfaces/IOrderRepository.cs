@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Modules.Orders.Domain.Entities;
 
-namespace Modules.Orders.Domain.Interfaces
+namespace Modules.Orders.Domain.Interfaces;
+
+public interface IOrderRepository
 {
-    internal interface IOrderRepository
-    {
-    }
+    Task<Order?> GetByIdAsync(Guid id);
+    Task AddAsync(Order order);
+    Task SaveChangesAsync();
 }
