@@ -1,0 +1,127 @@
+type: collection.insomnia.rest/5.0
+name: Web API
+meta:
+  id: wrk_de4bbc8afb554414963d40072b8807fc
+  created: 1753050741145
+  modified: 1753050943651
+collection:
+  - url: "{{ _.base_url }}/healthcheck"
+    name: Healthcheck
+    meta:
+      id: req_ba2f6edb44cb4013be15ba6ba934b6f1
+      created: 1753050741222
+      modified: 1753054408644
+      isPrivate: false
+      sortKey: -1753050741223
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/11.3.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.base_url }}/api/orders/:order_id"
+    name: Get Order By ID
+    meta:
+      id: req_bbdbc3edd1044254a78f4883b5dcbe90
+      created: 1753051084395
+      modified: 1753054429042
+      isPrivate: false
+      sortKey: -1753051084396
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/11.0.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+    pathParameters:
+      - name: order_id
+        value: 7fb47c75-b559-4edb-a06b-03c3d6ed4f03
+  - url: "{{ _.base_url }}/api/orders"
+    name: Create Order
+    meta:
+      id: req_f126716e39944da39f9b6b688402c6c7
+      created: 1753054215341
+      modified: 1753054504682
+      isPrivate: false
+      sortKey: -1753054215341
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "items": [
+            {
+              "productName": "Ensopado Suíno",
+              "quantity": 1,
+              "unitPrice": 22.00
+            }
+          ]
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/11.0.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.base_url }}/api/orders/reset-db"
+    name: Reset Table Orders
+    meta:
+      id: req_81ba4d36e25a432e96d10578cc6ed774
+      created: 1753054784166
+      modified: 1753055319029
+      isPrivate: false
+      sortKey: -1753054784166
+    method: POST
+    headers:
+      - name: User-Agent
+        value: insomnia/11.0.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_5ff9fa7c35f599ccaae368e67c3147ede7b20de9
+    created: 1753050741154
+    modified: 1753050741154
+environments:
+  name: Base Environment
+  meta:
+    id: env_5ff9fa7c35f599ccaae368e67c3147ede7b20de9
+    created: 1753050741149
+    modified: 1753050741149
+    isPrivate: false
+  subEnvironments:
+    - name: MeuGerente DEV
+      meta:
+        id: env_06e9eaee8e724f1a8e821071f073c55c
+        created: 1753054243082
+        modified: 1753054384347
+        isPrivate: false
+        sortKey: 1753054243082
+      data:
+        base_url: https://localhost:7273
