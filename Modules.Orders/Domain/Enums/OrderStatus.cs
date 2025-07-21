@@ -1,8 +1,9 @@
-﻿using System;
+﻿namespace Modules.Orders.Domain.Enums;
 
-namespace Modules.Orders.Domain.Enums
+public enum OrderStatus
 {
-    public enum OrderStatus
-    {
-    }
+    Pending,
+    Confirmed,
+    Delivered,
+    Cancelled,
 }
