@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Shared.Core;
 
-namespace Modules.Orders.Domain.Entities
+namespace Modules.Orders.Domain.Entities;
+
+public class OrderItem : BaseEntity
 {
-    internal class OrderItem
-    {
-    }
+    public Guid OrderId { get; set; }
+    public string ProductName { get; set; } = default!;
+    public int Quantity { get; set; }
+    public decimal UnitPrice { get; set; }
 }
