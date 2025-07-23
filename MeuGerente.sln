@@ -15,10 +15,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens
 		.gitignore = .gitignore
 		Directory.Packages.props = Directory.Packages.props
 		example.env = example.env
-		README.md = README.md
+		LEIAME.md = LEIAME.md
 	EndProjectSection
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "WhatsAppAPI", "WhatsAppAPI\WhatsAppAPI.esproj", "{AC4A9CF6-BC7A-CACF-657B-ED90B14B2EFE}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "FrontEnd", "FrontEnd\FrontEnd.esproj", "{462EE049-9FE1-B47D-1B3E-22BACA5D9185}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +46,18 @@ Global
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC4A9CF6-BC7A-CACF-657B-ED90B14B2EFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC4A9CF6-BC7A-CACF-657B-ED90B14B2EFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC4A9CF6-BC7A-CACF-657B-ED90B14B2EFE}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{AC4A9CF6-BC7A-CACF-657B-ED90B14B2EFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC4A9CF6-BC7A-CACF-657B-ED90B14B2EFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC4A9CF6-BC7A-CACF-657B-ED90B14B2EFE}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Release|Any CPU.Build.0 = Release|Any CPU
+		{462EE049-9FE1-B47D-1B3E-22BACA5D9185}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
