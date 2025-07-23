@@ -4,3 +4,30 @@ services:
     build:
       context: .
       dockerfile: WebAPI/Dockerfile
+    networks:
+      - meugerente
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+  db:
+    image: mongo:7
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    volumes:
+      - db_data:/data/db
+    networks:
+      - meugerente
+
+volumes:
+  db_data:
+
+networks:
+  meugerente:
+    driver: bridge
