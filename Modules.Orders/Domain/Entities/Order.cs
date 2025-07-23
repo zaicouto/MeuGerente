@@ -1,5 +1,4 @@
 ﻿using Modules.Orders.Domain.Enums;
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Shared.Core;
 
