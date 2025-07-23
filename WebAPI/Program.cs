@@ -1,4 +1,3 @@
-using dotenv.net;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -10,12 +9,7 @@ using Modules.Orders.Infrastructure.Persistence;
 using Modules.Orders.Infrastructure.Persistence.Seed;
 using Modules.Orders.Infrastructure.Repositories;
 using MongoDB.Driver;
-using Shared.Helpers;
 using WebAPI.Infrastructure.Middlewares;
-
-DotEnv.Load(
-    new DotEnvOptions(envFilePaths: [Path.Combine(PathHelpers.GetSolutionRootPath(), ".env")])
-);
 
 var builder = WebApplication.CreateBuilder(args);
 
