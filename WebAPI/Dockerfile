@@ -12,7 +12,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+COPY ["Directory.Packages.props", "."]
 COPY ["WebAPI/WebAPI.csproj", "WebAPI/"]
+COPY ["Modules.Orders/Modules.Orders.csproj", "Modules.Orders/"]
+COPY ["Shared/Shared.csproj", "Shared/"]
 RUN dotnet restore "./WebAPI/WebAPI.csproj"
 COPY . .
 WORKDIR "/src/WebAPI"
