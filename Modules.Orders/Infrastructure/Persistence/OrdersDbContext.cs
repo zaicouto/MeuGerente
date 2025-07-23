@@ -1,24 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Modules.Orders.Domain.Entities;
-using Modules.Orders.Infrastructure.Configurations;
-using Shared.Core;
+﻿using Modules.Orders.Domain.Entities;
+using MongoDB.Driver;
 
 namespace Modules.Orders.Infrastructure.Persistence;
 
-public class OrdersDbContext(DbContextOptions<OrdersDbContext> options)
-    : DbContext(options),
-        IUnitOfWork
+public class OrdersDbContext(IMongoClient client, string databaseName)
 {
-    public DbSet<Order> Orders => Set<Order>();
-    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    private readonly IMongoDatabase _database = client.GetDatabase(databaseName);
 
-    public async Task<int> SaveChangesAsync()
-    {
-        return await base.SaveChangesAsync();
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.ApplyConfiguration(new OrderConfiguration());
-    }
+    public IMongoCollection<Order> Orders => _database.GetCollection<Order>("orders");
+    public IMongoCollection<OrderItem> OrderItems =>
+        _database.GetCollection<OrderItem>("orderItems");
 }

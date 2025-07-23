@@ -1,7 +1,6 @@
+using dotenv.net;
 using FluentValidation;
-//using FluentValidation.AspNetCore;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Modules.Orders.Application.Behaviors;
 using Modules.Orders.Application.Commands;
@@ -10,12 +9,20 @@ using Modules.Orders.Domain.Interfaces;
 using Modules.Orders.Infrastructure.Persistence;
 using Modules.Orders.Infrastructure.Persistence.Seed;
 using Modules.Orders.Infrastructure.Repositories;
+using MongoDB.Driver;
+using Shared.Helpers;
 using WebAPI.Infrastructure.Middlewares;
+
+DotEnv.Load(
+    new DotEnvOptions(envFilePaths: [Path.Combine(PathHelpers.GetSolutionRootPath(), ".env")])
+);
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+
 #if DEBUG
-Console.WriteLine("Connection string: " + builder.Configuration.GetConnectionString("OrdersDb"));
+Console.WriteLine("Connection string: " + connectionString);
 #endif
 
 // Add services to the container.
@@ -26,20 +33,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// TODO: use environment variable for connection string
-builder.Services.AddDbContext<OrdersDbContext>(options =>
-{
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("OrdersDb"),
-        new MySqlServerVersion(new Version(11, 8, 2))
-    );
+builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(connectionString));
 
-    if (builder.Environment.IsDevelopment() || builder.Environment.EnvironmentName == "Testing")
-    {
-        options.EnableSensitiveDataLogging();
-        options.EnableDetailedErrors();
-    }
-});
+builder.Services.AddSingleton(sp => new OrdersDbContext(
+    sp.GetRequiredService<IMongoClient>(),
+    "meuGerente"
+));
+
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(CreateOrderCommandHandler).Assembly)
@@ -47,14 +47,14 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddValidatorsFromAssemblyContaining<CreateOrderCommandValidator>();
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-//builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 builder
     .Services.AddHealthChecks()
     .AddCheck("api_alive", () => HealthCheckResult.Healthy("API is running"))
-    .AddMySql(
-        builder.Configuration.GetConnectionString("OrdersDb")!,
-        name: "mariadb",
-        tags: ["db", "sql", "mariadb"]
+    .AddMongoDb(
+        sp => sp.GetRequiredService<IMongoClient>(),
+        name: "mongodb",
+        timeout: TimeSpan.FromSeconds(5),
+        tags: ["db", "nosql"]
     );
 
 var app = builder.Build();
@@ -64,9 +64,6 @@ if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Testi
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<OrdersDbContext>();
-
-    // Execute pending migrations
-    dbContext.Database.Migrate();
 
     // Populate fake data
     await OrdersDbSeeder.SeedAsync(dbContext);

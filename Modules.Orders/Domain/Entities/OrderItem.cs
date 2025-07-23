@@ -1,11 +1,17 @@
-﻿using Shared.Core;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using Shared.Core;
 
-namespace Modules.Orders.Domain.Entities;
-
-public class OrderItem : BaseEntity
+namespace Modules.Orders.Domain.Entities
 {
-    public Guid OrderId { get; set; }
-    public string ProductName { get; set; } = default!;
-    public int Quantity { get; set; }
-    public decimal UnitPrice { get; set; }
+    public class OrderItem : BaseEntity
+    {
+        [BsonElement("productName")]
+        public required string ProductName { get; set; }
+
+        [BsonElement("quantity")]
+        public int Quantity { get; set; }
+
+        [BsonElement("unitPrice")]
+        public decimal UnitPrice { get; set; }
+    }
 }

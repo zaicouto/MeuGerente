@@ -20,7 +20,7 @@ public class OrdersController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id)
+    public async Task<IActionResult> GetById(string id)
     {
         var order = await mediator.Send(new GetOrderByIdQuery(id));
         return order == null ? NotFound() : Ok(order);

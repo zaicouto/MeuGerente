@@ -1,24 +1,28 @@
 ﻿using MediatR;
 using Modules.Orders.Domain.Entities;
 using Modules.Orders.Domain.Interfaces;
+using MongoDB.Bson;
 
 namespace Modules.Orders.Application.Commands;
 
 public class CreateOrderCommandHandler(IOrderRepository orderRepository)
-    : IRequestHandler<CreateOrderCommand, Guid>
+    : IRequestHandler<CreateOrderCommand, string>
 {
-    public async Task<Guid> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+    public async Task<string> Handle(
+        CreateOrderCommand request,
+        CancellationToken cancellationToken
+    )
     {
         var order = new Order
         {
-            Id = Guid.NewGuid(),
+            Id = ObjectId.GenerateNewId().ToString(),
             CreatedAt = DateTime.UtcNow,
             Status = Domain.Enums.OrderStatus.Pending,
             Items =
             [
                 .. request.Items.Select(i => new OrderItem
                 {
-                    Id = Guid.NewGuid(),
+                    Id = ObjectId.GenerateNewId().ToString(),
                     ProductName = i.ProductName,
                     Quantity = i.Quantity,
                     UnitPrice = i.UnitPrice,
@@ -26,8 +30,7 @@ public class CreateOrderCommandHandler(IOrderRepository orderRepository)
             ],
         };
 
-        await orderRepository.AddAsync(order);
-        await orderRepository.SaveChangesAsync();
+        await orderRepository.InsertAsync(order);
 
         return order.Id;
     }

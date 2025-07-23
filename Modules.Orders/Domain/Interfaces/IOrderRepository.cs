@@ -4,7 +4,8 @@ namespace Modules.Orders.Domain.Interfaces;
 
 public interface IOrderRepository
 {
-    Task<Order?> GetByIdAsync(Guid id);
-    Task AddAsync(Order order);
-    Task SaveChangesAsync();
+    Task InsertAsync(Order order);
+    Task UpdateAsync(Order order);
+    Task<Order?> GetByIdAsync(string id);
+    Task DeleteAsync(string id);
 }
