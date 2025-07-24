@@ -32,6 +32,6 @@ public class OrdersController(IMediator mediator) : ControllerBase
     {
         await OrdersDbSeeder.TruncateAsync(context);
         await OrdersDbSeeder.SeedAsync(context);
-        return Ok("Reset completed!");
+        return Ok("Reset da collection orders finalizado!");
     }
 }
