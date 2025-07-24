@@ -2,13 +2,13 @@
 
 ## 📌 1. Estrutura de Projeto
 - [ ] Organizar solução em camadas:
-  - [ ] **API Layer** (Controllers)
+  - [x] **API Layer** (Controllers)
   - [ ] **Application Layer** (Services, Use Cases)
-  - [ ] **Domain Layer** (Entidades, Regras)
-  - [ ] **Infrastructure Layer** (MongoDB, RabbitMQ, External Services)
-- [ ] Configurar **Swagger** para documentação.
+  - [x] **Domain Layer** (Entidades, Regras)
+  - [x] **Infrastructure Layer** (MongoDB, RabbitMQ, External Services)
+- [x] Configurar **Swagger** para documentação.
 - [ ] Configurar **Logging** centralizado (Serilog, Elastic ou Sentry).
-- [ ] Criar **Dockerfile** e **docker-compose.yml**.
+- [x] Criar **Dockerfile** e **docker-compose.yml**.
 
 ---
 
@@ -30,7 +30,7 @@
 
 ## 📌 4. CRUD Básico
 - [ ] CRUD **Orders**
-  - [ ] Criar pedido
+  - [x] Criar pedido
   - [ ] Atualizar status
   - [ ] Cancelar pedido
   - [ ] Consultar por status, período
