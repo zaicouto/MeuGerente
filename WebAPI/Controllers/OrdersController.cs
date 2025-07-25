@@ -28,10 +28,10 @@ public class OrdersController(IMediator mediator) : ControllerBase
         Description = "Cria um novo pedido com os dados informados."
     )]
     [SwaggerResponse(StatusCodes.Status201Created, "Pedido criado com sucesso.")]
-    public async Task<IActionResult> Create(CreateOrderCommand command)
+    public async Task<IActionResult> CreateAsync(CreateOrderCommand command)
     {
         var id = await mediator.Send(command);
-        return CreatedAtAction(nameof(GetById), new { id }, id);
+        return CreatedAtAction(nameof(GetByIdAsync), new { id }, id);
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ public class OrdersController(IMediator mediator) : ControllerBase
         Description = "Exibe os detalhes de um pedido."
     )]
     [SwaggerResponse(StatusCodes.Status201Created, "Pedido encontrado.")]
-    public async Task<IActionResult> GetById(string orderId)
+    public async Task<IActionResult> GetByIdAsync(string orderId)
     {
         var order = await mediator.Send(new GetOrderByIdQuery(orderId));
         return order == null ? NotFound() : Ok(order);
@@ -65,7 +65,7 @@ public class OrdersController(IMediator mediator) : ControllerBase
         Description = "Apaga todos os documentos e depois popula a collection com dados de teste."
     )]
     [SwaggerResponse(StatusCodes.Status201Created, "Reset da collection finalizado.")]
-    public async Task<IActionResult> ResetDb([FromServices] OrdersDbContext context)
+    public async Task<IActionResult> ResetDbAsync([FromServices] OrdersDbContext context)
     {
         await OrdersDbSeeder.TruncateAsync(context);
         await OrdersDbSeeder.SeedAsync(context);
