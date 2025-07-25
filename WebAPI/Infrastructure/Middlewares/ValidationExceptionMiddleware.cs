@@ -1,4 +1,7 @@
-﻿namespace WebAPI.Infrastructure.Middlewares;
+﻿using FluentValidation;
+using Serilog;
+
+namespace WebAPI.Infrastructure.Middlewares;
 
 public class ValidationExceptionMiddleware(RequestDelegate next)
 {
@@ -8,8 +11,15 @@ public class ValidationExceptionMiddleware(RequestDelegate next)
         {
             await next(context);
         }
-        catch (FluentValidation.ValidationException ex)
+        catch (ValidationException ex)
         {
+            Log.Warning(
+                "ValidationException: {Errors} | Path={Path} | Method={Method}",
+                ex.Errors.Select(e => new { e.PropertyName, e.ErrorMessage }),
+                context.Request.Path,
+                context.Request.Method
+            );
+
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             context.Response.ContentType = "application/json";
 
@@ -22,7 +32,21 @@ public class ValidationExceptionMiddleware(RequestDelegate next)
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Exception: " + ex.InnerException);
+            Log.Error(
+                ex,
+                "Unhandled exception at {Path} | Method={Method}",
+                context.Request.Path,
+                context.Request.Method
+            );
+
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = "application/json";
+
+            var response = new
+            {
+                Error = "Ocorreu um erro inesperado. Tente novamente mais tarde.",
+            };
+            await context.Response.WriteAsJsonAsync(response);
         }
     }
 }
