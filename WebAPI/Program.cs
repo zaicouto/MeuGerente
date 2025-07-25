@@ -1,3 +1,4 @@
+using System.Reflection;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -10,108 +11,145 @@ using Modules.Orders.Infrastructure.Persistence;
 using Modules.Orders.Infrastructure.Persistence.Seed;
 using Modules.Orders.Infrastructure.Repositories;
 using MongoDB.Driver;
-using System.Reflection;
+using Serilog;
+using Serilog.Formatting.Compact;
 using WebAPI.Infrastructure.Middlewares;
 
-var builder = WebApplication.CreateBuilder(args);
+var appName = Assembly.GetExecutingAssembly().GetName().Name;
 
-var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithProperty("Application", appName)
+    .Enrich.WithProperty(
+        "Environment",
+        Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
+    )
+    .WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}"
+    )
+    .WriteTo.File(
+        new CompactJsonFormatter(),
+        "logs/log-.json",
+        rollingInterval: RollingInterval.Day
+    )
+    .CreateLogger();
+
+try
+{
+    Log.Information($"Starting {appName}...");
+
+    var builder = WebApplication.CreateBuilder(args);
+
+    builder.Host.UseSerilog();
+
+    var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
 #if DEBUG
-Console.WriteLine("Connection string: " + connectionString);
+    Console.WriteLine("Connection string: " + connectionString);
 #endif
 
-// Add services to the container.
+    // Add services to the container.
 
-builder.Services.AddControllers();
+    builder.Services.AddControllers();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc(
-        "v1",
-        new OpenApiInfo
-        {
-            Title = "Meu Gerente - Core API",
-            Version = "v1",
-            Description = "Documentação de Meu Gerente Core API com Swagger",
-            Contact = new OpenApiContact
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc(
+            "v1",
+            new OpenApiInfo
             {
-                Name = Environment.GetEnvironmentVariable("DEV_NAME"),
-                Email = Environment.GetEnvironmentVariable("DEV_EMAIL"),
-                Url = new Uri(Environment.GetEnvironmentVariable("DEV_URL")!),
-            },
+                Title = "Meu Gerente - Core API",
+                Version = "v1",
+                Description = "Documentação de Meu Gerente - Core API com Swagger",
+                Contact = new OpenApiContact
+                {
+                    Name = Environment.GetEnvironmentVariable("DEV_NAME"),
+                    Email = Environment.GetEnvironmentVariable("DEV_EMAIL"),
+                    Url = new Uri(Environment.GetEnvironmentVariable("DEV_URL")!),
+                },
+            }
+        );
+
+        var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        if (!File.Exists(xmlPath))
+        {
+            xmlPath = Path.Combine(AppContext.BaseDirectory, "bin/Debug/net8.0", xmlFile);
         }
-    );
 
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    if (!File.Exists(xmlPath))
-    {
-        xmlPath = Path.Combine(AppContext.BaseDirectory, "bin/Debug/net8.0", xmlFile);
-    }
+        if (File.Exists(xmlPath))
+        {
+            c.IncludeXmlComments(xmlPath);
+        }
 
-    if (File.Exists(xmlPath))
-    {
-        c.IncludeXmlComments(xmlPath);
-    }
-
-    Console.WriteLine("Path of XML: " + xmlPath);
-    c.EnableAnnotations();
-});
-
-builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(connectionString));
-
-builder.Services.AddSingleton(sp => new OrdersDbContext(
-    sp.GetRequiredService<IMongoClient>(),
-    "meuGerente"
-));
-
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(CreateOrderCommandHandler).Assembly)
-);
-builder.Services.AddValidatorsFromAssemblyContaining<CreateOrderCommandValidator>();
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-
-builder
-    .Services.AddHealthChecks()
-    .AddCheck("api_alive", () => HealthCheckResult.Healthy("API is running"))
-    .AddMongoDb(
-        sp => sp.GetRequiredService<IMongoClient>(),
-        name: "mongodb",
-        timeout: TimeSpan.FromSeconds(5),
-        tags: ["db", "nosql"]
-    );
-
-var app = builder.Build();
-
-// Populate with test data ONLY if the environment is Dev or Test
-if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Testing")
-{
-    using var scope = app.Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<OrdersDbContext>();
-
-    // Populate fake data
-    await OrdersDbSeeder.SeedAsync(dbContext);
-}
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Meu Gerente - Core API v1");
+        Console.WriteLine("Path of XML: " + xmlPath);
+        c.EnableAnnotations();
     });
+
+    builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(connectionString));
+
+    builder.Services.AddSingleton(sp => new OrdersDbContext(
+        sp.GetRequiredService<IMongoClient>(),
+        "meuGerente"
+    ));
+
+    builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+    builder.Services.AddMediatR(cfg =>
+        cfg.RegisterServicesFromAssembly(typeof(CreateOrderCommandHandler).Assembly)
+    );
+    builder.Services.AddValidatorsFromAssemblyContaining<CreateOrderCommandValidator>();
+    builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+    builder
+        .Services.AddHealthChecks()
+        .AddCheck("api_alive", () => HealthCheckResult.Healthy("API is running"))
+        .AddMongoDb(
+            sp => sp.GetRequiredService<IMongoClient>(),
+            name: "mongodb",
+            timeout: TimeSpan.FromSeconds(5),
+            tags: ["db", "nosql"]
+        );
+
+    var app = builder.Build();
+
+    // Populate with test data ONLY if the environment is Dev or Test
+    if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Testing")
+    {
+        using var scope = app.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<OrdersDbContext>();
+
+        // Populate fake data
+        await OrdersDbSeeder.SeedAsync(dbContext);
+    }
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Meu Gerente - Core API v1");
+        });
+    }
+
+    app.UseHttpsRedirection();
+    app.UseMiddleware<ValidationExceptionMiddleware>();
+
+    app.UseAuthorization();
+    app.MapHealthChecks("/healthcheck");
+    app.MapControllers();
+
+    app.Run();
+
+    Log.Information($"{appName} finished.");
 }
-
-app.UseHttpsRedirection();
-app.UseMiddleware<ValidationExceptionMiddleware>();
-
-app.UseAuthorization();
-app.MapHealthChecks("/healthcheck");
-app.MapControllers();
-
-app.Run();
+catch (Exception ex)
+{
+    Log.Fatal(ex, "An unhandled exception occurred during the execution of the program.");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
