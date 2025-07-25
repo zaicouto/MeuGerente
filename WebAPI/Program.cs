@@ -135,6 +135,7 @@ try
     }
 
     app.UseHttpsRedirection();
+    app.UseMiddleware<RequestLoggingMiddleware>();
     app.UseMiddleware<ValidationExceptionMiddleware>();
 
     app.UseAuthorization();
