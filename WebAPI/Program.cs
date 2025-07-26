@@ -1,3 +1,4 @@
+using System.Net;
 using System.Reflection;
 using FluentValidation;
 using MediatR;
@@ -12,6 +13,7 @@ using Modules.Orders.Infrastructure.Persistence.Seed;
 using Modules.Orders.Infrastructure.Repositories;
 using MongoDB.Driver;
 using Serilog;
+using Serilog.Events;
 using Serilog.Formatting.Compact;
 using WebAPI.Infrastructure.Middlewares;
 
@@ -31,6 +33,16 @@ Log.Logger = new LoggerConfiguration()
         new CompactJsonFormatter(),
         "logs/log-.json",
         rollingInterval: RollingInterval.Day
+    )
+    .WriteTo.Email(
+        from: Environment.GetEnvironmentVariable("SYSTEM_FROM_EMAIL")!,
+        to: Environment.GetEnvironmentVariable("SYSTEM_TO_EMAIL")!,
+        host: Environment.GetEnvironmentVariable("SYSTEM_EMAIL_SERVER")!,
+        credentials: new NetworkCredential(
+            Environment.GetEnvironmentVariable("SYSTEM_EMAIL_USER"),
+            Environment.GetEnvironmentVariable("SYSTEM_EMAIL_PASSWORD")
+        ),
+        restrictedToMinimumLevel: LogEventLevel.Error
     )
     .CreateLogger();
 
@@ -67,7 +79,7 @@ try
                 {
                     Name = Environment.GetEnvironmentVariable("DEV_NAME"),
                     Email = Environment.GetEnvironmentVariable("DEV_EMAIL"),
-                    Url = new Uri(Environment.GetEnvironmentVariable("DEV_URL")!),
+                    Url = new Uri(Environment.GetEnvironmentVariable("DEV_WEBSITE_URL")!),
                 },
             }
         );
