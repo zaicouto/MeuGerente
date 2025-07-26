@@ -14,7 +14,7 @@ namespace WebAPI.Controllers;
 [Route("api/orders")]
 [Consumes("application/json")]
 [Produces("application/json")]
-public class OrdersController(IMediator mediator) : ControllerBase
+public class OrdersController(IMediator mediator, ILogger<OrdersController> logger) : ControllerBase
 {
     /// <summary>
     /// Cria um novo pedido.
@@ -31,6 +31,7 @@ public class OrdersController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateAsync(CreateOrderCommand command)
     {
         var id = await mediator.Send(command);
+        logger.LogInformation("Order created with ID: {OrderId}", id);
         return CreatedAtAction(nameof(GetByIdAsync), new { id }, id);
     }
 
@@ -69,6 +70,7 @@ public class OrdersController(IMediator mediator) : ControllerBase
     {
         await OrdersDbSeeder.TruncateAsync(context);
         await OrdersDbSeeder.SeedAsync(context);
+        logger.LogInformation("Collection orders reseted.");
         return Ok("Reset da collection orders finalizado!");
     }
 }
