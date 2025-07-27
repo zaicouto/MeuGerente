@@ -7,7 +7,8 @@ public class DevOnlyAttribute : ActionFilterAttribute
 {
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        var env = context.HttpContext.RequestServices.GetService<IWebHostEnvironment>();
+        IWebHostEnvironment? env =
+            context.HttpContext.RequestServices.GetService<IWebHostEnvironment>();
 
         if (env != null && !env.IsDevelopment() && env.EnvironmentName != "Testing")
         {

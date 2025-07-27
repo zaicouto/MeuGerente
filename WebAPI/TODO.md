@@ -7,13 +7,13 @@
   - [x] **Domain Layer** (Entidades, Regras)
   - [x] **Infrastructure Layer** (MongoDB, RabbitMQ, External Services)
 - [x] Configurar **Swagger** para documentação.
-- [ ] Configurar **Logging** centralizado (Serilog, Elastic ou Sentry).
+- [x] Configurar **Logging** centralizado (Serilog, Elastic ou Sentry).
 - [x] Criar **Dockerfile** e **docker-compose.yml**.
 
 ---
 
 ## 📌 2. Multi-Tenant
-- [ ] Toda entidade principal (`Order`, `Product`, `User`, `Inventory`) deve ter `TenantId`.
+- [x] Toda entidade principal (`Order`, `Product`, `User`, `Inventory`) deve ter `TenantId`.
 - [ ] Middleware global para **resolver `TenantId`** do JWT.
 - [ ] Filtros automáticos para queries (`Query Filters`).
 - [ ] Estratégia para **Seed de Tenant/Admin**.

@@ -1,8 +1,8 @@
-using System.Net;
-using System.Reflection;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Modules.Orders.Application.Behaviors;
 using Modules.Orders.Application.Commands;
@@ -11,13 +11,19 @@ using Modules.Orders.Domain.Interfaces;
 using Modules.Orders.Infrastructure.Persistence;
 using Modules.Orders.Infrastructure.Persistence.Seed;
 using Modules.Orders.Infrastructure.Repositories;
+using Modules.Users.Domain.Interfaces;
+using Modules.Users.Infrastructure.Repositories;
+using Modules.Users.Infrastructure.Security;
 using MongoDB.Driver;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
+using System.Net;
+using System.Reflection;
+using System.Text;
 using WebAPI.Infrastructure.Middlewares;
 
-var appName = Assembly.GetExecutingAssembly().GetName().Name;
+string? appName = Assembly.GetExecutingAssembly().GetName().Name;
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -50,11 +56,11 @@ try
 {
     Log.Information($"Starting {appName}...");
 
-    var builder = WebApplication.CreateBuilder(args);
+    WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
     builder.Host.UseSerilog();
 
-    var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+    string? connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
 #if DEBUG
     Console.WriteLine("Connection string: " + connectionString);
@@ -84,8 +90,8 @@ try
             }
         );
 
-        var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
         if (!File.Exists(xmlPath))
         {
             xmlPath = Path.Combine(AppContext.BaseDirectory, "bin/Debug/net8.0", xmlFile);
@@ -108,6 +114,10 @@ try
     ));
 
     builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+    builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+
+    builder.Services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
+
     builder.Services.AddMediatR(cfg =>
         cfg.RegisterServicesFromAssembly(typeof(CreateOrderCommandHandler).Assembly)
     );
@@ -124,13 +134,31 @@ try
             tags: ["db", "nosql"]
         );
 
-    var app = builder.Build();
+    builder
+        .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
+                ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")!)
+                ),
+            };
+        });
+
+    WebApplication app = builder.Build();
 
     // Populate with test data ONLY if the environment is Dev or Test
     if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Testing")
     {
-        using var scope = app.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<OrdersDbContext>();
+        using IServiceScope scope = app.Services.CreateScope();
+        OrdersDbContext dbContext = scope.ServiceProvider.GetRequiredService<OrdersDbContext>();
 
         // Populate fake data
         await OrdersDbSeeder.SeedAsync(dbContext);
@@ -147,10 +175,13 @@ try
     }
 
     app.UseHttpsRedirection();
+
     app.UseMiddleware<RequestLoggingMiddleware>();
     app.UseMiddleware<ValidationExceptionMiddleware>();
 
+    app.UseAuthentication();
     app.UseAuthorization();
+
     app.MapHealthChecks("/healthcheck");
     app.MapControllers();
 

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Modules.Orders.Application.Commands;
 using Modules.Orders.Application.DTOs;
@@ -28,9 +29,10 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
         Description = "Cria um novo pedido com os dados informados."
     )]
     [SwaggerResponse(StatusCodes.Status201Created, "Pedido criado com sucesso.")]
+    [Authorize]
     public async Task<IActionResult> CreateAsync(CreateOrderCommand command)
     {
-        var id = await mediator.Send(command);
+        string id = await mediator.Send(command);
         logger.LogInformation("Order created with ID: {OrderId}", id);
         return CreatedAtAction(nameof(GetByIdAsync), new { id }, id);
     }
@@ -47,9 +49,10 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
         Description = "Exibe os detalhes de um pedido."
     )]
     [SwaggerResponse(StatusCodes.Status201Created, "Pedido encontrado.")]
+    [Authorize]
     public async Task<IActionResult> GetByIdAsync(string orderId)
     {
-        var order = await mediator.Send(new GetOrderByIdQuery(orderId));
+        OrderDto order = await mediator.Send(new GetOrderByIdQuery(orderId));
         return order == null ? NotFound() : Ok(order);
     }
 

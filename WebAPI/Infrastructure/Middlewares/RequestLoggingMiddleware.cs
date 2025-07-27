@@ -1,6 +1,6 @@
-﻿using System.Diagnostics;
+﻿using Serilog;
+using System.Diagnostics;
 using System.Security.Claims;
-using Serilog;
 
 namespace WebAPI.Infrastructure.Middlewares
 {
@@ -8,18 +8,20 @@ namespace WebAPI.Infrastructure.Middlewares
     {
         public async Task InvokeAsync(HttpContext context)
         {
-            var stopwatch = Stopwatch.StartNew();
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
-            var method = context.Request.Method;
-            var path = context.Request.Path;
-            var ip = context.Connection.RemoteIpAddress?.ToString();
+            string method = context.Request.Method;
+            PathString path = context.Request.Path;
+            string? ip = context.Connection.RemoteIpAddress?.ToString();
 
-            var correlationId =
+            string correlationId =
                 context.Request.Headers["X-Correlation-ID"].FirstOrDefault()
                 ?? Guid.NewGuid().ToString();
+
             context.Response.Headers["X-Correlation-ID"] = correlationId;
 
-            var userId = context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
+            string userId =
+                context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
 
             Log.Information(
                 "Request started: {Method} {Path} from {IP} | CorrelationId={CorrelationId} | UserId={UserId}",
@@ -34,8 +36,8 @@ namespace WebAPI.Infrastructure.Middlewares
 
             stopwatch.Stop();
 
-            var statusCode = context.Response.StatusCode;
-            var elapsedMs = stopwatch.ElapsedMilliseconds;
+            int statusCode = context.Response.StatusCode;
+            long elapsedMs = stopwatch.ElapsedMilliseconds;
 
             Log.Information(
                 "Request finished: {Method} {Path} → {StatusCode} in {ElapsedMs}ms | CorrelationId={CorrelationId} | UserId={UserId}",

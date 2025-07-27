@@ -23,7 +23,7 @@ public class ValidationExceptionMiddleware(RequestDelegate next)
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             context.Response.ContentType = "application/json";
 
-            var errors = ex
+            Dictionary<string, string[]> errors = ex
                 .Errors.GroupBy(e => e.PropertyName)
                 .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
 

@@ -10,22 +10,9 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AspNetCore.HealthChecks.MongoDb" />
-    <PackageReference Include="AspNetCore.HealthChecks.UI" />
-    <PackageReference Include="FluentValidation.AspNetCore" />
-    <PackageReference Include="MediatR" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
-    <PackageReference Include="MongoDB.Driver" />
-    <PackageReference Include="Serilog.AspNetCore" />
-    <PackageReference Include="Serilog.Formatting.Compact" />
-    <PackageReference Include="Serilog.Sinks.Console" />
-    <PackageReference Include="Serilog.Sinks.Email" />
-    <PackageReference Include="Serilog.Sinks.File" />
-    <PackageReference Include="Swashbuckle.AspNetCore" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\Modules.Auth\Modules.Users.csproj" />
     <ProjectReference Include="..\Modules.Orders\Modules.Orders.csproj" />
+    <ProjectReference Include="..\Modules.Users\Modules.Users.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 </Project>
