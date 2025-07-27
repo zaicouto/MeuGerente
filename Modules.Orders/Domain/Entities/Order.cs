@@ -4,7 +4,7 @@ using Shared.Core;
 
 namespace Modules.Orders.Domain.Entities;
 
-public class Order : BaseEntity
+public class Order : BaseEntityWithTenant
 {
     /// <summary>
     /// Status atual do pedido.

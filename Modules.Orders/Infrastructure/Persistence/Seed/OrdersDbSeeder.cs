@@ -15,19 +15,23 @@ public static class OrdersDbSeeder
 
     public static async Task SeedAsync(OrdersDbContext context)
     {
-        var hasAny = await context.Orders.Find(_ => true).AnyAsync();
+        bool hasAny = await context.Orders.Find(_ => true).AnyAsync();
         if (hasAny)
         {
             // Already populated. It skips and does nothing.
             return;
         }
 
-        var fakeOrders = new List<Order>
-        {
+        string tenantId = ObjectId.GenerateNewId().ToString();
+
+        List<Order> fakeOrders =
+        [
             new()
             {
                 Id = ObjectId.GenerateNewId().ToString(),
                 CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                TenantId = tenantId,
                 Status = OrderStatus.Pending,
                 Items =
                 [
@@ -51,6 +55,8 @@ public static class OrdersDbSeeder
             {
                 Id = ObjectId.GenerateNewId().ToString(),
                 CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                TenantId = tenantId,
                 Status = OrderStatus.Delivered,
                 Items =
                 [
@@ -63,7 +69,7 @@ public static class OrdersDbSeeder
                     },
                 ],
             },
-        };
+        ];
 
         await context.Orders.InsertManyAsync(fakeOrders);
     }

@@ -16,7 +16,7 @@ public class OrderRepository(OrdersDbContext context) : IOrderRepository
 
     public async Task UpdateAsync(Order order)
     {
-        var filter = Builders<Order>.Filter.Eq(x => x.Id, order.Id);
+        FilterDefinition<Order> filter = Builders<Order>.Filter.Eq(x => x.Id, order.Id);
         order.UpdatedAt = DateTime.UtcNow; // Update the date!
         await _orders.ReplaceOneAsync(filter, order);
     }
@@ -28,7 +28,7 @@ public class OrderRepository(OrdersDbContext context) : IOrderRepository
 
     public async Task DeleteAsync(string id)
     {
-        var filter = Builders<Order>.Filter.Eq(x => x.Id, id);
+        FilterDefinition<Order> filter = Builders<Order>.Filter.Eq(x => x.Id, id);
         await _orders.DeleteOneAsync(filter);
     }
 }

@@ -13,10 +13,12 @@ public class CreateOrderCommandHandler(IOrderRepository orderRepository)
         CancellationToken cancellationToken
     )
     {
-        var order = new Order
+        Order order = new()
         {
             Id = ObjectId.GenerateNewId().ToString(),
             CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            TenantId = "", // TODO: Set the tenant ID appropriately
             Status = Domain.Enums.OrderStatus.Pending,
             Items =
             [
