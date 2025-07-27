@@ -26,3 +26,13 @@ public abstract class BaseEntity
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }
+
+public abstract class BaseEntityWithTenant : BaseEntity
+{
+    /// <summary>
+    /// Identificador do locatário (tenant).
+    /// </summary>
+    [BsonElement("tenantId")]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public required string TenantId { get; set; }
+}
