@@ -178,6 +178,7 @@ try
 
     app.UseMiddleware<RequestLoggingMiddleware>();
     app.UseMiddleware<ValidationExceptionMiddleware>();
+    app.UseMiddleware<ExceptionHandlingMiddleware>(Log.Logger);
 
     app.UseAuthentication();
     app.UseAuthorization();
