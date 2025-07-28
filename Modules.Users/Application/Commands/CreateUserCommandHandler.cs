@@ -5,28 +5,25 @@ using MongoDB.Bson;
 
 namespace Modules.Users.Application.Commands;
 
-public class CreateUserCommandHandler(IAuthRepository authRepository)
+public class CreateUserCommandHandler(IAuthRepository authRepository, IPasswordHasher hasher)
     : IRequestHandler<CreateUserCommand, string>
 {
-    public async Task<string> Handle(
-        CreateUserCommand request,
-        CancellationToken cancellationToken
-    )
+    public async Task<string> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         User user = new()
         {
             Id = ObjectId.GenerateNewId().ToString(),
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            TenantId = "", // TODO: Set the tenant ID appropriately
+            TenantId = ObjectId.GenerateNewId().ToString(),
             Email = request.Email,
-            Password = request.Password,
             FirstName = request.FirstName,
             LastName = request.LastName,
         };
 
-        await authRepository.InsertAsync(user);
+        user.SetPassword(request.Password, hasher);
 
+        await authRepository.InsertAsync(user);
         return user.Id;
     }
 }

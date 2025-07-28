@@ -1,9 +1,9 @@
 ﻿# ✅ Checklist de Implementação — Core API (.NET 8)
 
 ## 📌 1. Estrutura de Projeto
-- [ ] Organizar solução em camadas:
+- [x] Organizar solução em camadas:
   - [x] **API Layer** (Controllers)
-  - [ ] **Application Layer** (Services, Use Cases)
+  - [x] **Application Layer** (Services, Use Cases)
   - [x] **Domain Layer** (Entidades, Regras)
   - [x] **Infrastructure Layer** (MongoDB, RabbitMQ, External Services)
 - [x] Configurar **Swagger** para documentação.

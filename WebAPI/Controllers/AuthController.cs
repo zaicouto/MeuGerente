@@ -5,6 +5,7 @@ using Modules.Users.Application.Queries;
 using Modules.Users.Application.Services;
 using Modules.Users.Domain.Entities;
 using Modules.Users.Domain.Interfaces;
+using MongoDB.Bson;
 
 namespace WebAPI.Controllers
 {
@@ -20,7 +21,8 @@ namespace WebAPI.Controllers
 #if DEBUG
             if (dto.Email == "admin@admin.com" && dto.Password == "Pass@12345")
             {
-                token = JwtService.GenerateJwtToken(dto.Email);
+                string adminTenantId = ObjectId.GenerateNewId().ToString();
+                token = JwtService.GenerateJwtToken(dto.Email, adminTenantId);
                 return Ok(new { token });
             }
 #endif
@@ -36,7 +38,7 @@ namespace WebAPI.Controllers
                 return Unauthorized(new { message = "Invalid credentials." });
             }
 
-            token = JwtService.GenerateJwtToken(dto.Email);
+            token = JwtService.GenerateJwtToken(dto.Email, user.TenantId);
             return Ok(new { token });
         }
     }

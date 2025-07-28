@@ -7,12 +7,13 @@ namespace Modules.Users.Application.Services
 {
     public class JwtService
     {
-        public static string GenerateJwtToken(string email)
+        public static string GenerateJwtToken(string email, string tenantId)
         {
             Claim[] claims =
             [
-                new Claim(ClaimTypes.Name, email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(ClaimTypes.Email, email),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(ClaimTypes.UserData, tenantId),
             ];
 
             SymmetricSecurityKey key = new(

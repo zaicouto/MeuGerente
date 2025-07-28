@@ -10,7 +10,6 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Modules.Auth\Modules.Users.csproj" />
     <ProjectReference Include="..\Modules.Orders\Modules.Orders.csproj" />
     <ProjectReference Include="..\Modules.Users\Modules.Users.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />

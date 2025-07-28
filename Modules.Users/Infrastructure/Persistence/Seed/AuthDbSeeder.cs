@@ -1,4 +1,6 @@
 ﻿using Modules.Users.Domain.Entities;
+using Modules.Users.Domain.Interfaces;
+using Modules.Users.Infrastructure.Security;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -23,32 +25,33 @@ public static class AuthDbSeeder
 
         string tenantId = ObjectId.GenerateNewId().ToString();
 
-        List<User> fakeUsers =
-        [
-            new()
-            {
-                Id = ObjectId.GenerateNewId().ToString(),
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                TenantId = tenantId,
-                Email = "user1@mail.com",
-                Password = "Pass@12345",
-                FirstName = "User",
-                LastName = "One"
-            },
-            new()
-            {
-                Id = ObjectId.GenerateNewId().ToString(),
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                TenantId = tenantId,
-                Email = "user2@mail.com",
-                Password = "Pass@12345",
-                FirstName = "User",
-                LastName = "Two"
-            },
-        ];
+        IPasswordHasher hasher = new BcryptPasswordHasher();
 
+        User user1 = new()
+        {
+            Id = ObjectId.GenerateNewId().ToString(),
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            TenantId = tenantId,
+            Email = "user1@mail.com",
+            FirstName = "User",
+            LastName = "One",
+        };
+        user1.SetPassword("Pass@12345", hasher);
+
+        User user2 = new()
+        {
+            Id = ObjectId.GenerateNewId().ToString(),
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            TenantId = tenantId,
+            Email = "user2@mail.com",
+            FirstName = "User",
+            LastName = "Two",
+        };
+        user2.SetPassword("Pass@12345", hasher);
+
+        List<User> fakeUsers = [user1, user2];
         await context.Users.InsertManyAsync(fakeUsers);
     }
 }
