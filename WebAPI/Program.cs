@@ -12,18 +12,39 @@ using Modules.Orders.Infrastructure.Persistence;
 using Modules.Orders.Infrastructure.Persistence.Seed;
 using Modules.Orders.Infrastructure.Repositories;
 using Modules.Users.Domain.Interfaces;
+using Modules.Users.Infrastructure.Persistence;
 using Modules.Users.Infrastructure.Repositories;
 using Modules.Users.Infrastructure.Security;
 using MongoDB.Driver;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
+using Shared.Domain.Interfaces;
+using Shared.Infrastructure.Context;
 using System.Net;
 using System.Reflection;
 using System.Text;
 using WebAPI.Infrastructure.Middlewares;
 
 string? appName = Assembly.GetExecutingAssembly().GetName().Name;
+
+string? sysFromEmail = Environment.GetEnvironmentVariable("SYSTEM_FROM_EMAIL");
+if (string.IsNullOrEmpty(sysFromEmail))
+{
+    throw new InvalidOperationException("SYSTEM_FROM_EMAIL environment variable is not set.");
+}
+
+string? sysToEmail = Environment.GetEnvironmentVariable("SYSTEM_TO_EMAIL");
+if (string.IsNullOrEmpty(sysToEmail))
+{
+    throw new InvalidOperationException("SYSTEM_TO_EMAIL environment variable is not set.");
+}
+
+string? sysEmailServer = Environment.GetEnvironmentVariable("SYSTEM_EMAIL_SERVER");
+if (string.IsNullOrEmpty(sysEmailServer))
+{
+    throw new InvalidOperationException("SYSTEM_EMAIL_SERVER environment variable is not set.");
+}
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -41,9 +62,9 @@ Log.Logger = new LoggerConfiguration()
         rollingInterval: RollingInterval.Day
     )
     .WriteTo.Email(
-        from: Environment.GetEnvironmentVariable("SYSTEM_FROM_EMAIL")!,
-        to: Environment.GetEnvironmentVariable("SYSTEM_TO_EMAIL")!,
-        host: Environment.GetEnvironmentVariable("SYSTEM_EMAIL_SERVER")!,
+        from: sysFromEmail,
+        to: sysToEmail,
+        host: sysEmailServer,
         credentials: new NetworkCredential(
             Environment.GetEnvironmentVariable("SYSTEM_EMAIL_USER"),
             Environment.GetEnvironmentVariable("SYSTEM_EMAIL_PASSWORD")
@@ -74,6 +95,12 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c =>
     {
+        string? devWebsiteUrl = Environment.GetEnvironmentVariable("DEV_WEBSITE_URL");
+        if (string.IsNullOrEmpty(devWebsiteUrl))
+        {
+            throw new InvalidOperationException("DEV_WEBSITE_URL environment variable is not set.");
+        }
+
         c.SwaggerDoc(
             "v1",
             new OpenApiInfo
@@ -85,7 +112,7 @@ try
                 {
                     Name = Environment.GetEnvironmentVariable("DEV_NAME"),
                     Email = Environment.GetEnvironmentVariable("DEV_EMAIL"),
-                    Url = new Uri(Environment.GetEnvironmentVariable("DEV_WEBSITE_URL")!),
+                    Url = new Uri(devWebsiteUrl),
                 },
             }
         );
@@ -108,15 +135,31 @@ try
 
     builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(connectionString));
 
+    string? mongoDb = Environment.GetEnvironmentVariable("MONGO_INITDB_DATABASE");
+    if (string.IsNullOrEmpty(mongoDb))
+    {
+        throw new InvalidOperationException(
+            "MONGO_INITDB_DATABASE environment variable is not set."
+        );
+    }
+
     builder.Services.AddSingleton(sp => new OrdersDbContext(
         sp.GetRequiredService<IMongoClient>(),
-        "meuGerente"
+        mongoDb
+    ));
+
+    builder.Services.AddSingleton(sp => new AuthDbContext(
+        sp.GetRequiredService<IMongoClient>(),
+        mongoDb
     ));
 
     builder.Services.AddScoped<IOrderRepository, OrderRepository>();
     builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
     builder.Services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
+
+    builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+    builder.Services.AddScoped<ITenantContext, TenantContext>();
 
     builder.Services.AddMediatR(cfg =>
         cfg.RegisterServicesFromAssembly(typeof(CreateOrderCommandHandler).Assembly)
@@ -138,6 +181,12 @@ try
         .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
+            string? jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
+            if (string.IsNullOrEmpty(jwtKey))
+            {
+                throw new InvalidOperationException("JWT_KEY environment variable is not set.");
+            }
+
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
@@ -146,9 +195,7 @@ try
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
                 ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")!)
-                ),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
             };
         });
 
@@ -179,6 +226,7 @@ try
     app.UseMiddleware<RequestLoggingMiddleware>();
     app.UseMiddleware<ValidationExceptionMiddleware>();
     app.UseMiddleware<ExceptionHandlingMiddleware>(Log.Logger);
+    app.UseMiddleware<TenantMiddleware>();
 
     app.UseAuthentication();
     app.UseAuthorization();

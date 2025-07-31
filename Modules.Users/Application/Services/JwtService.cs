@@ -16,9 +16,13 @@ namespace Modules.Users.Application.Services
                 new(ClaimTypes.UserData, tenantId),
             ];
 
-            SymmetricSecurityKey key = new(
-                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")!)
-            );
+            string? jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
+            if (string.IsNullOrEmpty(jwtKey))
+            {
+                throw new InvalidOperationException("JWT_KEY environment variable is not set.");
+            }
+
+            SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(jwtKey));
             SigningCredentials creds = new(key, SecurityAlgorithms.HmacSha256);
 
             JwtSecurityToken token = new(
