@@ -2,6 +2,7 @@
 using Modules.Orders.Application.DTOs;
 using Modules.Orders.Domain.Entities;
 using Modules.Orders.Domain.Interfaces;
+using Shared.Domain.Exceptions;
 
 namespace Modules.Orders.Application.Queries;
 
@@ -15,7 +16,7 @@ public class GetOrderByIdQueryHandler(IOrderRepository orderRepository)
     {
         Order? order = await orderRepository.GetByIdAsync(request.Id);
         return order == null
-            ? throw new Exception("Pedido não encontrado.")
+            ? throw new BadRequestException("Pedido não encontrado.")
             : new OrderDto
             {
                 Id = order.Id,

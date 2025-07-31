@@ -14,7 +14,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, Serilog.ILogger l
         }
         catch (Exception ex)
         {
-            logger.Error(ex, "An unhandled exception occurred.");
+            logger.Error(ex, "Aconteceu uma exceção não tratada.");
             await HandleExceptionAsync(context, ex);
         }
     }

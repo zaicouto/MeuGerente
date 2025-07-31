@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Modules.Users.Domain.Entities;
 using Modules.Users.Domain.Interfaces;
+using Shared.Domain.Exceptions;
 
 namespace Modules.Users.Application.Queries;
 
@@ -13,6 +14,6 @@ public class GetUserByEmailQueryHandler(IAuthRepository authRepository)
     )
     {
         User? user = await authRepository.GetByEmailAsync(request.Email);
-        return user ?? throw new Exception("Dados não encontrados.");
+        return user ?? throw new BadRequestException("Dados não encontrados.");
     }
 }
