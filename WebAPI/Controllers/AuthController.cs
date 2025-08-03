@@ -11,7 +11,6 @@ using Shared.Domain.Exceptions;
 
 namespace WebAPI.Controllers;
 
-[ApiController]
 [Route("api/auth")]
 public class AuthController(IMediator mediator, IPasswordHasher hasher) : ApiControllerBase
 {
@@ -21,10 +20,10 @@ public class AuthController(IMediator mediator, IPasswordHasher hasher) : ApiCon
         string token;
 
 #if DEBUG
-        if (AdminCredentials.IsValid(dto.Email, dto.Password))
+        if (SuperAdminCredentials.IsValid(dto.Email, dto.Password))
         {
-            string adminTenantId = AdminCredentials.TenantId;
-            token = JwtService.GenerateJwtToken(dto.Email, adminTenantId);
+            string adminTenantId = SuperAdminCredentials.TenantId;
+            token = JwtService.GenerateJwtToken(dto.Email, adminTenantId, UserRoles.SuperAdmin);
             return Ok(new { adminTenantId, token });
         }
 #endif
@@ -36,6 +35,6 @@ public class AuthController(IMediator mediator, IPasswordHasher hasher) : ApiCon
         }
 
         token = JwtService.GenerateJwtToken(dto.Email, user.TenantId);
-        return Ok(new { token });
+        return Ok(new { user.TenantId, token });
     }
 }

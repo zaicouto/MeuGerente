@@ -23,7 +23,7 @@ public static class OrdersDbSeeder
             return;
         }
 
-        string tenantId = AdminCredentials.TenantId;
+        string tenantId = SuperAdminCredentials.TenantId;
 
         List<Order> fakeOrders =
         [

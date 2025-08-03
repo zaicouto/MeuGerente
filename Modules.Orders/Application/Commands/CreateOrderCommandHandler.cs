@@ -22,8 +22,7 @@ public class CreateOrderCommandHandler(
         //throw new DebugException("TenantContext", tenantContext.GetInfo());
 
         string tenantId =
-            tenantContext.TenantId
-            ?? throw new BadRequestException("Tenant ID não encontrado.");
+            tenantContext.TenantId ?? throw new BadRequestException("Tenant ID não encontrado.");
 
         Order order = new()
         {
@@ -31,8 +30,10 @@ public class CreateOrderCommandHandler(
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
             TenantId = tenantId,
-            Status = OrderStatus.Pending,
-            Items =
+            ClientId = request.ClientId,
+        };
+        order.UpdateStatus(OrderStatus.Pending);
+        order.UpdateItems(
             [
                 .. request.Items.Select(i => new OrderItem
                 {
@@ -41,8 +42,8 @@ public class CreateOrderCommandHandler(
                     Quantity = i.Quantity,
                     UnitPrice = i.UnitPrice,
                 }),
-            ],
-        };
+            ]
+        );
 
         await orderRepository.InsertAsync(order);
 

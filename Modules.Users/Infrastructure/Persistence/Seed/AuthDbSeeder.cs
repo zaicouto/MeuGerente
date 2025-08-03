@@ -33,7 +33,7 @@ public static class AuthDbSeeder
             Id = ObjectId.GenerateNewId().ToString(),
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            TenantId = AdminCredentials.TenantId,
+            TenantId = SuperAdminCredentials.TenantId,
             Email = "admin@email.com",
             FirstName = "Admin",
             LastName = "User",

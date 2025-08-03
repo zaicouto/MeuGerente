@@ -159,6 +159,7 @@ try
     builder.Services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
 
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+    builder.Services.AddScoped<IRolesContext, RolesContext>();
     builder.Services.AddScoped<ITenantContext, TenantContext>();
 
     IEnumerable<Assembly> modules = AppDomain
@@ -232,6 +233,7 @@ try
 
     app.UseHttpsRedirection();
 
+    app.UseMiddleware<RolesMiddleware>();
     app.UseMiddleware<TenantMiddleware>();
 
     app.UseMiddleware<ValidationExceptionMiddleware>();

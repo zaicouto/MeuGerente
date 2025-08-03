@@ -12,18 +12,13 @@ using WebAPI.Infrastructure.Filters;
 
 namespace WebAPI.Controllers;
 
-[ApiController]
 [Route("api/orders")]
-[Consumes("application/json")]
-[Produces("application/json")]
 public class OrdersController(IMediator mediator, ILogger<OrdersController> logger)
     : ApiControllerBase
 {
     /// <summary>
     /// Cria um novo pedido.
     /// </summary>
-    /// <param name="command"></param>
-    /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
     [SwaggerOperation(
@@ -40,17 +35,72 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     }
 
     /// <summary>
+    /// Atualiza um pedido existente.
+    /// </summary>
+    [HttpPut("{orderId}")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [SwaggerOperation(
+        Summary = "Atualiza um pedido.",
+        Description = "Atualiza os dados de um pedido existente."
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Pedido atualizado com sucesso.")]
+    [Authorize]
+    public async Task<IActionResult> UpdateAsync(string orderId, UpdateOrderCommand command)
+    {
+        command.OrderId = orderId;
+        await mediator.Send(command);
+        logger.LogInformation("Order updated with ID: {OrderId}", orderId);
+        return Ok(new { UpdatedOrder = true });
+    }
+
+    /// <summary>
+    /// Marca um pedido como excluído (soft delete).
+    /// </summary>
+    [HttpDelete("{orderId}")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [SwaggerOperation(
+        Summary = "Marca um pedido como excluído.",
+        Description = "Marca um pedido como excluído logicamente."
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Pedido marcado como excluído.")]
+    [Authorize]
+    public async Task<IActionResult> SoftDeleteAsync(string orderId)
+    {
+        await mediator.Send(new SoftDeleteOrderCommand(orderId));
+        logger.LogInformation("Order soft deleted with ID: {OrderId}", orderId);
+        return Ok(new { DeletedOrder = true });
+    }
+
+    /// <summary>
+    /// Busca todos os pedidos com paginação.
+    /// </summary>
+    [HttpGet]
+    [ProducesResponseType(typeof(PaginatedList<OrderDto>), StatusCodes.Status200OK)]
+    [SwaggerOperation(
+        Summary = "Lista pedidos com paginação.",
+        Description = "Lista todos os pedidos de forma paginada."
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Lista de pedidos retornada.")]
+    [Authorize]
+    public async Task<IActionResult> GetAllAsync(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10
+    )
+    {
+        object? orders = await mediator.Send(new GetAllOrdersQuery(pageNumber, pageSize));
+        return Ok(new { orders });
+    }
+
+    /// <summary>
     /// Busca um pedido pelo ID.
     /// </summary>
-    /// <param name="orderId">ID do pedido.</param>
-    /// <returns>foo</returns>
     [HttpGet("{orderId}")]
     [ProducesResponseType(typeof(OrderDto), StatusCodes.Status200OK)]
     [SwaggerOperation(
         Summary = "Busca um pedido pelo ID.",
         Description = "Exibe os detalhes de um pedido."
     )]
-    [SwaggerResponse(StatusCodes.Status201Created, "Pedido encontrado.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Pedido encontrado.")]
     [Authorize]
     public async Task<IActionResult> GetByIdAsync(string orderId)
     {
@@ -61,8 +111,6 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     /// <summary>
     /// [Dev Only] Redefine a collection de pedidos.
     /// </summary>
-    /// <param name="context"></param>
-    /// <returns></returns>
     [HttpPost("resetdb")]
     [DevOnly]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
@@ -70,12 +118,12 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
         Summary = "[Dev Only] Redefine a collection de pedidos.",
         Description = "Apaga todos os documentos e depois popula a collection com dados de teste."
     )]
-    [SwaggerResponse(StatusCodes.Status201Created, "Reset da collection finalizado.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Reset da collection finalizado.")]
     public async Task<IActionResult> ResetDbAsync([FromServices] OrdersDbContext context)
     {
         await OrdersDbSeeder.TruncateAsync(context);
         await OrdersDbSeeder.SeedAsync(context);
         logger.LogInformation("Collection orders reseted.");
-        return Ok("Reset da collection orders finalizado!");
+        return Ok(new { Result = "Reset da collection orders finalizado!" });
     }
 }

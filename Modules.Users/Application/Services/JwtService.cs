@@ -8,13 +8,18 @@ namespace Modules.Users.Application.Services;
 
 public class JwtService
 {
-    public static string GenerateJwtToken(string email, string tenantId)
+    public static string GenerateJwtToken(
+        string email,
+        string tenantId,
+        UserRoles role = UserRoles.Default
+    )
     {
         Claim[] claims =
         [
             new(ClaimTypes.Email, email),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(CustomClaimTypes.TenantId, tenantId),
+            new(ClaimTypes.Role, role.ToString()),
         ];
 
         string? jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");

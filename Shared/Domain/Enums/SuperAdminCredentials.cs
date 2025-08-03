@@ -1,6 +1,6 @@
 ﻿namespace Shared.Domain.Enums;
 
-public static class AdminCredentials
+public static class SuperAdminCredentials
 {
     public const string Email = "admin@email.com";
     public const string Password = "Pass@12345";
