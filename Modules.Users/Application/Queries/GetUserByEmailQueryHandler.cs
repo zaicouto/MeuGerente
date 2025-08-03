@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Modules.Users.Domain.Entities;
 using Modules.Users.Domain.Interfaces;
-using Shared.Domain.Exceptions;
+using Shared.Exceptions;
 
 namespace Modules.Users.Application.Queries;
 
@@ -14,6 +14,6 @@ public class GetUserByEmailQueryHandler(IAuthRepository authRepository)
     )
     {
         User? user = await authRepository.GetByEmailAsync(request.Email);
-        return user ?? throw new UnauthorizedException("Credenciais inválidas.");
+        return user ?? throw new UnauthorizedException();
     }
 }

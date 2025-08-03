@@ -1,10 +1,10 @@
 ﻿using Modules.Users.Domain.Interfaces;
 using MongoDB.Bson.Serialization.Attributes;
-using Shared.Core;
+using Shared.Abstractions;
 
 namespace Modules.Users.Domain.Entities;
 
-public class User : BaseEntityWithTenant
+public class User : EntityBaseWithTenant
 {
     [BsonElement("email")]
     public required string Email { get; set; }
@@ -22,7 +22,7 @@ public class User : BaseEntityWithTenant
     public string FullName => $"{FirstName} {LastName}";
 
     /// <summary>
-    /// Set the password hash and update the last updated timestamp.
+    /// Define o hash da senha e atualiza o timestamp de atualização.
     /// </summary>
     public void SetPassword(string password, IPasswordHasher hasher)
     {
@@ -31,7 +31,7 @@ public class User : BaseEntityWithTenant
     }
 
     /// <summary>
-    /// Verify if the provided password matches the stored password hash.
+    /// Verifica se a senha fornecida corresponde ao hash da senha armazenado.
     /// </summary>
     public bool VerifyPassword(string password, IPasswordHasher hasher)
     {

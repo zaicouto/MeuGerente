@@ -1,9 +1,9 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
-using Shared.Core;
+using Shared.Abstractions;
 
 namespace Modules.Orders.Domain.Entities;
 
-public class OrderItem : BaseEntity
+public class OrderItem : EntityBase
 {
     /// <summary>
     /// Nome do produto associado ao item do pedido.

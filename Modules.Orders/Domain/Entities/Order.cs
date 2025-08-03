@@ -1,10 +1,10 @@
 ﻿using Modules.Orders.Domain.Enums;
 using MongoDB.Bson.Serialization.Attributes;
-using Shared.Core;
+using Shared.Abstractions;
 
 namespace Modules.Orders.Domain.Entities;
 
-public class Order : BaseEntityWithTenant
+public class Order : EntityBaseWithTenant
 {
     /// <summary>
     /// Status atual do pedido.

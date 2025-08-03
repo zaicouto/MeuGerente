@@ -2,7 +2,7 @@
 using Modules.Orders.Domain.Enums;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using Shared.Domain.Enums;
+using Shared.Enums;
 
 namespace Modules.Orders.Infrastructure.Persistence.Seed;
 
@@ -23,55 +23,65 @@ public static class OrdersDbSeeder
             return;
         }
 
-        string tenantId = SuperAdminCredentials.TenantId;
+        string tenantId = SuperAdminCreds.TenantId;
 
-        List<Order> fakeOrders =
-        [
-            new()
-            {
-                Id = ObjectId.GenerateNewId().ToString(),
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                TenantId = tenantId,
-                Status = OrderStatus.Pending,
-                Items =
-                [
-                    new OrderItem
-                    {
-                        Id = ObjectId.GenerateNewId().ToString(),
-                        ProductName = "Café Expresso",
-                        Quantity = 2,
-                        UnitPrice = 5.0m,
-                    },
-                    new OrderItem
-                    {
-                        Id = ObjectId.GenerateNewId().ToString(),
-                        ProductName = "Pão de Queijo",
-                        Quantity = 3,
-                        UnitPrice = 3.5m,
-                    },
-                ],
-            },
-            new()
-            {
-                Id = ObjectId.GenerateNewId().ToString(),
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                TenantId = tenantId,
-                Status = OrderStatus.Delivered,
-                Items =
-                [
-                    new OrderItem
-                    {
-                        Id = ObjectId.GenerateNewId().ToString(),
-                        ProductName = "Sanduíche Natural",
-                        Quantity = 1,
-                        UnitPrice = 12.0m,
-                    },
-                ],
-            },
-        ];
+        Order order1 = new()
+        {
+            Id = ObjectId.GenerateNewId().ToString(),
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            TenantId = tenantId,
+            ClientId = ObjectId.GenerateNewId().ToString(),
+        };
+        order1.UpdateStatus(OrderStatus.Pending);
+        order1.UpdateItems(
+            [
+                new OrderItem
+                {
+                    Id = ObjectId.GenerateNewId().ToString(),
+                    ProductName = "Café Expresso",
+                    Quantity = 2,
+                    UnitPrice = 5.0m,
+                },
+                new OrderItem
+                {
+                    Id = ObjectId.GenerateNewId().ToString(),
+                    ProductName = "Pão de Queijo",
+                    Quantity = 3,
+                    UnitPrice = 3.5m,
+                },
+            ]
+        );
 
+        Order order2 = new()
+        {
+            Id = ObjectId.GenerateNewId().ToString(),
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            TenantId = tenantId,
+            ClientId = ObjectId.GenerateNewId().ToString(),
+        };
+        order2.UpdateStatus(OrderStatus.Delivered);
+        order2.UpdateItems(
+            [
+                new OrderItem
+                {
+                    Id = ObjectId.GenerateNewId().ToString(),
+                    ProductName = "Suco Natural",
+                    Quantity = 1,
+                    UnitPrice = 7.0m,
+                },
+                new OrderItem
+                {
+                    Id = ObjectId.GenerateNewId().ToString(),
+                    ProductName = "Bolo de Cenoura",
+                    Quantity = 2,
+                    UnitPrice = 4.0m,
+                },
+            ]
+        );
+
+        List<Order> fakeOrders = [order1, order2];
         await context.Orders.InsertManyAsync(fakeOrders);
     }
 }

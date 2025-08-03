@@ -1,4 +1,3 @@
 ﻿namespace Modules.Orders.Application.Commands;
-internal class SoftDeleteOrderCommandHandler
-{
-}
+
+public class SoftDeleteOrderCommandHandler { }

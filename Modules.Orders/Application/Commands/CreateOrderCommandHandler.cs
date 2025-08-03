@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using Modules.Orders.Domain.Entities;
 using Modules.Orders.Domain.Enums;
+using Modules.Orders.Domain.Exceptions;
 using Modules.Orders.Domain.Interfaces;
 using MongoDB.Bson;
-using Shared.Domain.Exceptions;
-using Shared.Domain.Interfaces;
+using Shared.Interfaces;
 
 namespace Modules.Orders.Application.Commands;
 
@@ -22,7 +22,7 @@ public class CreateOrderCommandHandler(
         //throw new DebugException("TenantContext", tenantContext.GetInfo());
 
         string tenantId =
-            tenantContext.TenantId ?? throw new BadRequestException("Tenant ID não encontrado.");
+            tenantContext.TenantId ?? throw new OrderBadRequestException("Não foi possível encontrar o ID do locatário.");
 
         Order order = new()
         {

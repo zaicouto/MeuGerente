@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.Orders", "Modules.O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{12B554FE-DAEF-4FB2-8E5F-382A21342350}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "WebAPI\WebAPI.csproj", "{8D6B33C5-CEE1-20B5-A207-99CBB61F699C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreAPI", "CoreAPI\CoreAPI.csproj", "{8D6B33C5-CEE1-20B5-A207-99CBB61F699C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{9616B7B3-F277-4ACB-8F4A-8253917218DA}"
 	ProjectSection(SolutionItems) = preProject

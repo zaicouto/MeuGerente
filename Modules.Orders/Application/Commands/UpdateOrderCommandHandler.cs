@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Modules.Orders.Domain.Entities;
+using Modules.Orders.Domain.Exceptions;
 using Modules.Orders.Domain.Interfaces;
 using MongoDB.Bson;
-using Shared.Domain.Exceptions;
-using Shared.Domain.Interfaces;
+using Shared.Interfaces;
 
 namespace Modules.Orders.Application.Commands;
 
@@ -14,7 +14,7 @@ public class UpdateOrderCommandHandler(IOrderRepository orderRepository, IRolesC
     {
         Order order =
             await orderRepository.GetByIdAsync(request.OrderId)
-            ?? throw new NotFoundException("Pedido inexistente.");
+            ?? throw new OrderNotFoundException();
 
         order.UpdateStatus(request.Status, rolesContext.IsAdmin);
         order.UpdateItems(

@@ -10,10 +10,6 @@
     <None Remove="Infrastructure\Persistence\Scripts\**" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Infrastructure\Persistence\Migrations\" />
-  </ItemGroup>
-  <ItemGroup></ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 </Project>

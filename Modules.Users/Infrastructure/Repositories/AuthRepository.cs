@@ -17,7 +17,7 @@ public class AuthRepository(AuthDbContext context) : IAuthRepository
     public async Task UpdateAsync(User user)
     {
         FilterDefinition<User> filter = Builders<User>.Filter.Eq(x => x.Id, user.Id);
-        user.UpdatedAt = DateTime.UtcNow; // Update the date!
+        user.UpdatedAt = DateTime.UtcNow;
         await _users.ReplaceOneAsync(filter, user);
     }
 

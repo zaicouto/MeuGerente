@@ -2,7 +2,7 @@
 
 public class OrderItemDto
 {
-    public string ProductName { get; set; } = default!;
-    public int Quantity { get; set; }
-    public decimal UnitPrice { get; set; }
+    public required string ProductName { get; set; }
+    public required int Quantity { get; set; }
+    public required decimal UnitPrice { get; set; }
 }

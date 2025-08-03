@@ -3,7 +3,7 @@ using Modules.Users.Domain.Interfaces;
 using Modules.Users.Infrastructure.Security;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using Shared.Domain.Enums;
+using Shared.Enums;
 
 namespace Modules.Users.Infrastructure.Persistence.Seed;
 
@@ -24,8 +24,6 @@ public static class AuthDbSeeder
             return;
         }
 
-        string tenantId = ObjectId.GenerateNewId().ToString();
-
         IPasswordHasher hasher = new BcryptPasswordHasher();
 
         User admin = new()
@@ -33,13 +31,14 @@ public static class AuthDbSeeder
             Id = ObjectId.GenerateNewId().ToString(),
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            TenantId = SuperAdminCredentials.TenantId,
-            Email = "admin@email.com",
-            FirstName = "Admin",
-            LastName = "User",
+            TenantId = SuperAdminCreds.TenantId,
+            Email = SuperAdminCreds.Email,
+            FirstName = SuperAdminCreds.FirstName,
+            LastName = SuperAdminCreds.LastName,
         };
-        admin.SetPassword("Pass@12345", hasher);
+        admin.SetPassword(SuperAdminCreds.Password, hasher);
 
+        string tenantId = ObjectId.GenerateNewId().ToString();
         User user1 = new()
         {
             Id = ObjectId.GenerateNewId().ToString(),
