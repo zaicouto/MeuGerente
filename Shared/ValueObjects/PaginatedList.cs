@@ -35,12 +35,12 @@ public class PaginatedList<T>
         CancellationToken cancellationToken = default
     )
     {
-        var count = await collection.CountDocumentsAsync(
+        long count = await collection.CountDocumentsAsync(
             filter,
             cancellationToken: cancellationToken
         );
 
-        var items = await collection
+        List<T> items = await collection
             .Find(filter)
             .Skip((pageNumber - 1) * pageSize)
             .Limit(pageSize)
@@ -59,8 +59,8 @@ public class PaginatedList<T>
         CancellationToken cancellationToken = default
     )
     {
-        var count = await findFluent.CountDocumentsAsync(cancellationToken);
-        var items = await findFluent
+        long count = await findFluent.CountDocumentsAsync(cancellationToken);
+        List<T> items = await findFluent
             .Skip((pageNumber - 1) * pageSize)
             .Limit(pageSize)
             .ToListAsync(cancellationToken);

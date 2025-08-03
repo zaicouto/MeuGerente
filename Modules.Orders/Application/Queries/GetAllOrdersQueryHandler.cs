@@ -17,10 +17,12 @@ public class GetAllOrdersQueryHandler(IOrderRepository orderRepository)
         CancellationToken cancellationToken
     )
     {
-        var filter = Builders<Order>.Filter.Empty;
-        var find = _ordersCollection.Find(filter).SortByDescending(x => x.CreatedAt);
+        FilterDefinition<Order> filter = Builders<Order>.Filter.Empty;
+        IOrderedFindFluent<Order, Order> find = _ordersCollection
+            .Find(filter)
+            .SortByDescending(x => x.CreatedAt);
 
-        var paginated = await PaginatedList<Order>.CreateAsync(
+        PaginatedList<Order> paginated = await PaginatedList<Order>.CreateAsync(
             find,
             request.PageNumber,
             request.PageSize,
@@ -28,8 +30,9 @@ public class GetAllOrdersQueryHandler(IOrderRepository orderRepository)
         );
 
         // Mapeia para DTO
-        var dtoList = paginated
-            .Items.Select(o => new OrderDto
+        List<OrderDto> dtoList =
+        [
+            .. paginated.Items.Select(o => new OrderDto
             {
                 Id = o.Id,
                 TenantId = o.TenantId,
@@ -45,8 +48,8 @@ public class GetAllOrdersQueryHandler(IOrderRepository orderRepository)
                         UnitPrice = i.UnitPrice,
                     }),
                 ],
-            })
-            .ToList();
+            }),
+        ];
 
         return new PaginatedList<OrderDto>(
             dtoList,

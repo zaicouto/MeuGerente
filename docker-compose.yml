@@ -3,7 +3,7 @@ services:
     image: ${DOCKER_REGISTRY-}webapi
     build:
       context: .
-      dockerfile: WebAPI/Dockerfile
+      dockerfile: CoreAPI/Dockerfile
     networks:
       - meugerente
     depends_on:
