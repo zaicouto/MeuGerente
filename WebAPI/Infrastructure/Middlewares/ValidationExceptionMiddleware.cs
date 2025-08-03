@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Serilog;
+using Shared.Infrastructure.Base;
 
 namespace WebAPI.Infrastructure.Middlewares;
 
@@ -28,7 +29,9 @@ public class ValidationExceptionMiddleware(RequestDelegate next)
                 .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
 
             var response = new { Errors = errors };
-            await context.Response.WriteAsJsonAsync(response);
+            await context.Response.WriteAsJsonAsync(
+                new ApiResponse(false, "A validação falhou.", response)
+            );
         }
         catch (Exception ex)
         {
@@ -46,7 +49,9 @@ public class ValidationExceptionMiddleware(RequestDelegate next)
             {
                 Error = "Ocorreu um erro inesperado. Tente novamente mais tarde.",
             };
-            await context.Response.WriteAsJsonAsync(response);
+            await context.Response.WriteAsJsonAsync(
+                new ApiResponse(false, "Um erro inesperado aconteceu.", response)
+            );
         }
     }
 }

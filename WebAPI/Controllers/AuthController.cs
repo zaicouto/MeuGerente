@@ -5,41 +5,37 @@ using Modules.Users.Application.Queries;
 using Modules.Users.Application.Services;
 using Modules.Users.Domain.Entities;
 using Modules.Users.Domain.Interfaces;
-using MongoDB.Bson;
+using Shared.Core;
+using Shared.Domain.Enums;
+using Shared.Domain.Exceptions;
 
-namespace WebAPI.Controllers
+namespace WebAPI.Controllers;
+
+[ApiController]
+[Route("api/auth")]
+public class AuthController(IMediator mediator, IPasswordHasher hasher) : ApiControllerBase
 {
-    [ApiController]
-    [Route("api/auth")]
-    public class AuthController(IMediator mediator, IPasswordHasher hasher) : ControllerBase
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto dto)
-        {
-            string token;
+        string token;
 
 #if DEBUG
-            if (dto.Email == "admin@admin.com" && dto.Password == "Pass@12345")
-            {
-                string adminTenantId = ObjectId.GenerateNewId().ToString();
-                token = JwtService.GenerateJwtToken(dto.Email, adminTenantId);
-                return Ok(new { token });
-            }
+        if (AdminCredentials.IsValid(dto.Email, dto.Password))
+        {
+            string adminTenantId = AdminCredentials.TenantId;
+            token = JwtService.GenerateJwtToken(dto.Email, adminTenantId);
+            return Ok(new { adminTenantId, token });
+        }
 #endif
 
-            User user = await mediator.Send(new GetUserByEmailQuery(dto.Email));
-            if (user == null)
-            {
-                return Unauthorized(new { message = "Invalid credentials." });
-            }
-
-            if (!user.VerifyPassword(dto.Password, hasher))
-            {
-                return Unauthorized(new { message = "Invalid credentials." });
-            }
-
-            token = JwtService.GenerateJwtToken(dto.Email, user.TenantId);
-            return Ok(new { token });
+        User user = await mediator.Send(new GetUserByEmailQuery(dto.Email));
+        if (!user.VerifyPassword(dto.Password, hasher))
+        {
+            throw new UnauthorizedException("Credenciais inválidas.");
         }
+
+        token = JwtService.GenerateJwtToken(dto.Email, user.TenantId);
+        return Ok(new { token });
     }
 }

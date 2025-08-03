@@ -3,6 +3,7 @@ using Modules.Users.Domain.Interfaces;
 using Modules.Users.Infrastructure.Security;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Shared.Domain.Enums;
 
 namespace Modules.Users.Infrastructure.Persistence.Seed;
 
@@ -26,6 +27,18 @@ public static class AuthDbSeeder
         string tenantId = ObjectId.GenerateNewId().ToString();
 
         IPasswordHasher hasher = new BcryptPasswordHasher();
+
+        User admin = new()
+        {
+            Id = ObjectId.GenerateNewId().ToString(),
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            TenantId = AdminCredentials.TenantId,
+            Email = "admin@email.com",
+            FirstName = "Admin",
+            LastName = "User",
+        };
+        admin.SetPassword("Pass@12345", hasher);
 
         User user1 = new()
         {
@@ -51,7 +64,7 @@ public static class AuthDbSeeder
         };
         user2.SetPassword("Pass@12345", hasher);
 
-        List<User> fakeUsers = [user1, user2];
+        List<User> fakeUsers = [admin, user1, user2];
         await context.Users.InsertManyAsync(fakeUsers);
     }
 }

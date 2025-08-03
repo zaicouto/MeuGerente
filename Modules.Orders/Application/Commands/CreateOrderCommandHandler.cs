@@ -18,6 +18,9 @@ public class CreateOrderCommandHandler(
         CancellationToken cancellationToken
     )
     {
+        //throw new DebugException("Tenant ID", tenantContext.TenantId ?? "nulo");
+        //throw new DebugException("TenantContext", tenantContext.GetInfo());
+
         string tenantId =
             tenantContext.TenantId
             ?? throw new BadRequestException("Tenant ID não encontrado.");

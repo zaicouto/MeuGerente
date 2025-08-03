@@ -7,11 +7,11 @@ services:
     networks:
       - meugerente
     depends_on:
-      - db
+      - mongodb
     env_file:
       - .env
 
-  db:
+  mongodb:
     image: mongo:7
     restart: always
     ports:
@@ -21,12 +21,12 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
     volumes:
-      - db_data:/data/db
+      - mongodb_data:/data/db
     networks:
       - meugerente
 
 volumes:
-  db_data:
+  mongodb_data:
 
 networks:
   meugerente:

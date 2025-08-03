@@ -1,24 +1,24 @@
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Modules.Orders.Application.Behaviors;
-using Modules.Orders.Application.Commands;
-using Modules.Orders.Application.Validators;
 using Modules.Orders.Domain.Interfaces;
 using Modules.Orders.Infrastructure.Persistence;
 using Modules.Orders.Infrastructure.Persistence.Seed;
 using Modules.Orders.Infrastructure.Repositories;
 using Modules.Users.Domain.Interfaces;
 using Modules.Users.Infrastructure.Persistence;
+using Modules.Users.Infrastructure.Persistence.Seed;
 using Modules.Users.Infrastructure.Repositories;
 using Modules.Users.Infrastructure.Security;
 using MongoDB.Driver;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
+using Shared.Domain.Exceptions;
 using Shared.Domain.Interfaces;
 using Shared.Infrastructure.Context;
 using System.Net;
@@ -81,7 +81,7 @@ try
 
     builder.Host.UseSerilog();
 
-    string? connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+    string? connectionString = Environment.GetEnvironmentVariable("MONGO_CONNECTION_STRING");
 
 #if DEBUG
     Console.WriteLine("Connection string: " + connectionString);
@@ -107,7 +107,7 @@ try
             {
                 Title = "Meu Gerente - Core API",
                 Version = "v1",
-                Description = "Documenta��o de Meu Gerente - Core API com Swagger",
+                Description = "Documentação de Meu Gerente - Core API com Swagger",
                 Contact = new OpenApiContact
                 {
                     Name = Environment.GetEnvironmentVariable("DEV_NAME"),
@@ -161,10 +161,16 @@ try
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     builder.Services.AddScoped<ITenantContext, TenantContext>();
 
-    builder.Services.AddMediatR(cfg =>
-        cfg.RegisterServicesFromAssembly(typeof(CreateOrderCommandHandler).Assembly)
-    );
-    builder.Services.AddValidatorsFromAssemblyContaining<CreateOrderCommandValidator>();
+    IEnumerable<Assembly> modules = AppDomain
+        .CurrentDomain.GetAssemblies()
+        .Where(a => a.FullName!.StartsWith("Modules"));
+
+    foreach (Assembly? module in modules)
+    {
+        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(module));
+        builder.Services.AddValidatorsFromAssembly(module);
+    }
+
     builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
     builder
@@ -209,6 +215,9 @@ try
 
         // Populate fake data
         await OrdersDbSeeder.SeedAsync(dbContext);
+
+        AuthDbContext authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+        await AuthDbSeeder.SeedAsync(authDbContext);
     }
 
     // Configure the HTTP request pipeline.
@@ -223,10 +232,30 @@ try
 
     app.UseHttpsRedirection();
 
-    app.UseMiddleware<RequestLoggingMiddleware>();
-    app.UseMiddleware<ValidationExceptionMiddleware>();
-    app.UseMiddleware<ExceptionHandlingMiddleware>(Log.Logger);
     app.UseMiddleware<TenantMiddleware>();
+
+    app.UseMiddleware<ValidationExceptionMiddleware>();
+    app.UseMiddleware<WebExceptionHandlingMiddleware>(Log.Logger);
+
+    app.UseMiddleware<RequestLoggingMiddleware>();
+
+    // Middleware customizado para capturar exceções de debug.
+    app.Use(
+        async (context, next) =>
+        {
+            try
+            {
+                await next.Invoke();
+            }
+            catch (DebugException ex)
+            {
+                Console.WriteLine(ex.ToString());
+
+                context.Response.StatusCode = 500;
+                await context.Response.WriteAsync(ex.ToString());
+            }
+        }
+    );
 
     app.UseAuthentication();
     app.UseAuthorization();

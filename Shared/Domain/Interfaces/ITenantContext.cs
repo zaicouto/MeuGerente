@@ -1,7 +1,7 @@
-﻿namespace Shared.Domain.Interfaces
+﻿namespace Shared.Domain.Interfaces;
+
+public interface ITenantContext
 {
-    public interface ITenantContext
-    {
-        string? TenantId { get; }
-    }
+    string? TenantId { get; }
+    string GetInfo();
 }

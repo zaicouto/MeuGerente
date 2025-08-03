@@ -14,6 +14,6 @@ public class GetUserByEmailQueryHandler(IAuthRepository authRepository)
     )
     {
         User? user = await authRepository.GetByEmailAsync(request.Email);
-        return user ?? throw new BadRequestException("Dados não encontrados.");
+        return user ?? throw new UnauthorizedException("Credenciais inválidas.");
     }
 }

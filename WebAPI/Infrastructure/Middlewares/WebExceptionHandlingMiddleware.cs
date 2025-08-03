@@ -1,10 +1,10 @@
 ﻿using Shared.Domain.Exceptions;
+using Shared.Infrastructure.Base;
 using System.Net;
-using System.Text.Json;
 
 namespace WebAPI.Infrastructure.Middlewares;
 
-public class ExceptionHandlingMiddleware(RequestDelegate next, Serilog.ILogger logger)
+public class WebExceptionHandlingMiddleware(RequestDelegate next, Serilog.ILogger logger)
 {
     public async Task Invoke(HttpContext context)
     {
@@ -14,7 +14,17 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, Serilog.ILogger l
         }
         catch (Exception ex)
         {
-            logger.Error(ex, "Aconteceu uma exceção não tratada.");
+            if (
+                ex
+                is not NotFoundException
+                    or BadRequestException
+                    or UnauthorizedException
+                    or ForbiddenException
+                    or ConflictException
+            )
+            {
+                logger.Error(ex, "Aconteceu uma exceção não tratada.");
+            }
             await HandleExceptionAsync(context, ex);
         }
     }
@@ -66,11 +76,11 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, Serilog.ILogger l
             instance = context.Request.Path,
         };
 
-        string payload = JsonSerializer.Serialize(problemDetails);
-
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)status;
 
-        return context.Response.WriteAsync(payload);
+        return context.Response.WriteAsJsonAsync(
+            new ApiResponse(false, "Uma exceção foi lançada.", problemDetails)
+        );
     }
 }

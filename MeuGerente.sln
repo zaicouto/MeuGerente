@@ -11,6 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "WebAPI\WebAPI.csp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{9616B7B3-F277-4ACB-8F4A-8253917218DA}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.env = .env
 		.gitignore = .gitignore
 		Directory.Packages.props = Directory.Packages.props

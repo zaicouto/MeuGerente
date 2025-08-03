@@ -2,6 +2,7 @@
 using Modules.Orders.Domain.Enums;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Shared.Domain.Enums;
 
 namespace Modules.Orders.Infrastructure.Persistence.Seed;
 
@@ -22,7 +23,7 @@ public static class OrdersDbSeeder
             return;
         }
 
-        string tenantId = ObjectId.GenerateNewId().ToString();
+        string tenantId = AdminCredentials.TenantId;
 
         List<Order> fakeOrders =
         [

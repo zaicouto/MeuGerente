@@ -6,6 +6,7 @@ using Modules.Orders.Application.DTOs;
 using Modules.Orders.Application.Queries;
 using Modules.Orders.Infrastructure.Persistence;
 using Modules.Orders.Infrastructure.Persistence.Seed;
+using Shared.Core;
 using Swashbuckle.AspNetCore.Annotations;
 using WebAPI.Infrastructure.Filters;
 
@@ -15,7 +16,8 @@ namespace WebAPI.Controllers;
 [Route("api/orders")]
 [Consumes("application/json")]
 [Produces("application/json")]
-public class OrdersController(IMediator mediator, ILogger<OrdersController> logger) : ControllerBase
+public class OrdersController(IMediator mediator, ILogger<OrdersController> logger)
+    : ApiControllerBase
 {
     /// <summary>
     /// Cria um novo pedido.
@@ -34,7 +36,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     {
         string id = await mediator.Send(command);
         logger.LogInformation("Order created with ID: {OrderId}", id);
-        return CreatedAtAction(nameof(GetByIdAsync), new { id }, id);
+        return Ok(new { NewOrderId = id });
     }
 
     /// <summary>
@@ -53,7 +55,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     public async Task<IActionResult> GetByIdAsync(string orderId)
     {
         OrderDto order = await mediator.Send(new GetOrderByIdQuery(orderId));
-        return order == null ? NotFound() : Ok(order);
+        return Ok(new { order });
     }
 
     /// <summary>
@@ -61,7 +63,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     /// </summary>
     /// <param name="context"></param>
     /// <returns></returns>
-    [HttpPost("reset-db")]
+    [HttpPost("resetdb")]
     [DevOnly]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [SwaggerOperation(

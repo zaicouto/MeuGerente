@@ -17,7 +17,7 @@ public class OrderRepository(OrdersDbContext context) : IOrderRepository
     public async Task UpdateAsync(Order order)
     {
         FilterDefinition<Order> filter = Builders<Order>.Filter.Eq(x => x.Id, order.Id);
-        order.UpdatedAt = DateTime.UtcNow; // Update the date!
+        order.UpdatedAt = DateTime.UtcNow;
         await _orders.ReplaceOneAsync(filter, order);
     }
 
