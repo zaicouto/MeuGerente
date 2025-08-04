@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Serilog;
+using Shared.Application.DTOs;
 
 namespace Shared.Infrastructure.Middlewares;
 

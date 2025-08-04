@@ -8,6 +8,7 @@ using Modules.Orders.Infrastructure.Persistence;
 using Modules.Orders.Infrastructure.Persistence.Seed;
 using Shared.Domain.Abstractions;
 using Shared.Domain.ValueObjects;
+using Shared.Infrastructure.Filters;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace CoreAPI.Controllers;

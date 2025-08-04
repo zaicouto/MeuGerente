@@ -7,6 +7,7 @@ using Modules.Users.Domain.Interfaces;
 using Modules.Users.Infrastructure.Security;
 using Shared.Domain.Abstractions;
 using Shared.Domain.Enums;
+using Shared.Domain.Exceptions;
 
 namespace CoreAPI.Controllers;
 

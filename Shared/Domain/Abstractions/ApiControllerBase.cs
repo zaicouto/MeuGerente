@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Shared.Application.DTOs;
 
 namespace Shared.Domain.Abstractions;
 

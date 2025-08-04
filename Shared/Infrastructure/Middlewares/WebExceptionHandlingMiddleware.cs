@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Net;
+using Microsoft.AspNetCore.Http;
 using Serilog;
+using Shared.Application.DTOs;
 using Shared.Domain.Exceptions;
-using System.Net;
 
 namespace Shared.Infrastructure.Middlewares;
 
