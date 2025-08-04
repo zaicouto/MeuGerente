@@ -13,21 +13,21 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Directory.Packages.props", "."]
-COPY ["WebAPI/WebAPI.csproj", "WebAPI/"]
+COPY ["CoreAPI/CoreAPI.csproj", "CoreAPI/"]
 COPY ["Modules.Orders/Modules.Orders.csproj", "Modules.Orders/"]
 COPY ["Shared/Shared.csproj", "Shared/"]
-RUN dotnet restore "./WebAPI/WebAPI.csproj"
+RUN dotnet restore "./CoreAPI/CoreAPI.csproj"
 COPY . .
-WORKDIR "/src/WebAPI"
-RUN dotnet build "./WebAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/CoreAPI"
+RUN dotnet build "./CoreAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./WebAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./CoreAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Esta fase é usada na produção ou quando executada no VS no modo normal (padrão quando não está usando a configuração de Depuração)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "WebAPI.dll"]
+ENTRYPOINT ["dotnet", "CoreAPI.dll"]
