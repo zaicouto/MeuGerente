@@ -5,9 +5,8 @@ using Modules.Users.Application.Queries;
 using Modules.Users.Domain.Entities;
 using Modules.Users.Domain.Interfaces;
 using Modules.Users.Infrastructure.Security;
-using Shared.Abstractions;
-using Shared.Enums;
-using Shared.Exceptions;
+using Shared.Domain.Abstractions;
+using Shared.Domain.Enums;
 
 namespace CoreAPI.Controllers;
 

@@ -4,7 +4,7 @@ using Modules.Orders.Domain.Enums;
 using Modules.Orders.Domain.Exceptions;
 using Modules.Orders.Domain.Interfaces;
 using MongoDB.Bson;
-using Shared.Interfaces;
+using Shared.Domain.Interfaces;
 
 namespace Modules.Orders.Application.Commands;
 
@@ -22,16 +22,17 @@ public class CreateOrderCommandHandler(
         //throw new DebugException("TenantContext", tenantContext.GetInfo());
 
         string tenantId =
-            tenantContext.TenantId ?? throw new OrderBadRequestException("Não foi possível encontrar o ID do locatário.");
+            tenantContext.TenantId
+            ?? throw new OrderBadRequestException("Não foi possível encontrar o ID do locatário.");
 
         Order order = new()
         {
             Id = ObjectId.GenerateNewId().ToString(),
             CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
             TenantId = tenantId,
             ClientId = request.ClientId,
         };
+        order.UpdateTimestamps();
         order.UpdateStatus(OrderStatus.Pending);
         order.UpdateItems(
             [

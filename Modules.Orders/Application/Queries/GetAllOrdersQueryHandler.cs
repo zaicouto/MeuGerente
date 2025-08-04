@@ -1,55 +1,27 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Modules.Orders.Application.DTOs;
 using Modules.Orders.Domain.Entities;
 using Modules.Orders.Domain.Interfaces;
-using MongoDB.Driver;
-using Shared.ValueObjects;
+using Shared.Domain.ValueObjects;
 
 namespace Modules.Orders.Application.Queries;
 
-public class GetAllOrdersQueryHandler(IOrderRepository orderRepository)
+public class GetAllOrdersQueryHandler(IOrderRepository orderRepository, IMapper mapper)
     : IRequestHandler<GetAllOrdersQuery, PaginatedList<OrderDto>>
 {
-    private readonly IMongoCollection<Order> _ordersCollection = orderRepository.Collection;
-
     public async Task<PaginatedList<OrderDto>> Handle(
         GetAllOrdersQuery request,
         CancellationToken cancellationToken
     )
     {
-        FilterDefinition<Order> filter = Builders<Order>.Filter.Empty;
-        IOrderedFindFluent<Order, Order> find = _ordersCollection
-            .Find(filter)
-            .SortByDescending(x => x.CreatedAt);
-
-        PaginatedList<Order> paginated = await PaginatedList<Order>.CreateAsync(
-            find,
+        PaginatedList<Order> paginated = await orderRepository.GetAllAsync(
             request.PageNumber,
             request.PageSize,
             cancellationToken
         );
 
-        // Mapeia para DTO
-        List<OrderDto> dtoList =
-        [
-            .. paginated.Items.Select(o => new OrderDto
-            {
-                Id = o.Id,
-                TenantId = o.TenantId,
-                CreatedAt = o.CreatedAt,
-                UpdatedAt = o.UpdatedAt,
-                Status = o.Status,
-                Items =
-                [
-                    .. o.Items.Select(i => new OrderItemDto
-                    {
-                        ProductName = i.ProductName,
-                        Quantity = i.Quantity,
-                        UnitPrice = i.UnitPrice,
-                    }),
-                ],
-            }),
-        ];
+        List<OrderDto> dtoList = mapper.Map<List<OrderDto>>(paginated.Items);
 
         return new PaginatedList<OrderDto>(
             dtoList,

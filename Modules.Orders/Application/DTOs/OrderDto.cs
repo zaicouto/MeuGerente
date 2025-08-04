@@ -9,6 +9,6 @@ public class OrderDto
     public required string TenantId { get; set; }
     public required DateTime CreatedAt { get; set; }
     public required DateTime UpdatedAt { get; set; }
-    public OrderStatus Status { get; set; } = OrderStatus.Pending;
+    public string Status { get; set; } = OrderStatus.Pending.ToString();
     public List<OrderItemDto> Items { get; set; } = [];
 }

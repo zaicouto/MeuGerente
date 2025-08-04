@@ -1,6 +1,6 @@
 ﻿using Modules.Users.Domain.Interfaces;
 using MongoDB.Bson.Serialization.Attributes;
-using Shared.Abstractions;
+using Shared.Domain.Abstractions;
 
 namespace Modules.Users.Domain.Entities;
 
@@ -27,7 +27,7 @@ public class User : EntityBaseWithTenant
     public void SetPassword(string password, IPasswordHasher hasher)
     {
         PasswordHash = hasher.Hash(password);
-        UpdatedAt = DateTime.UtcNow;
+        UpdateTimestamps();
     }
 
     /// <summary>

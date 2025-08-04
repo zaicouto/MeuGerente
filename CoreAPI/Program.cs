@@ -1,4 +1,7 @@
-﻿using FluentValidation;
+﻿using System.Net;
+using System.Reflection;
+using System.Text;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -18,13 +21,10 @@ using MongoDB.Driver;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
-using Shared.Contexts;
-using Shared.Exceptions;
-using Shared.Interfaces;
-using Shared.Middlewares;
-using System.Net;
-using System.Reflection;
-using System.Text;
+using Shared.Domain.Exceptions;
+using Shared.Domain.Interfaces;
+using Shared.Infrastructure.Contexts;
+using Shared.Infrastructure.Middlewares;
 
 string? appName = Assembly.GetExecutingAssembly().GetName().Name;
 
@@ -205,6 +205,8 @@ try
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
             };
         });
+
+    builder.Services.AddAutoMapper(cfg => cfg.AddMaps(modules));
 
     WebApplication app = builder.Build();
 

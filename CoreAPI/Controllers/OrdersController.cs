@@ -6,9 +6,8 @@ using Modules.Orders.Application.DTOs;
 using Modules.Orders.Application.Queries;
 using Modules.Orders.Infrastructure.Persistence;
 using Modules.Orders.Infrastructure.Persistence.Seed;
-using Shared.Abstractions;
-using Shared.Filters;
-using Shared.ValueObjects;
+using Shared.Domain.Abstractions;
+using Shared.Domain.ValueObjects;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace CoreAPI.Controllers;

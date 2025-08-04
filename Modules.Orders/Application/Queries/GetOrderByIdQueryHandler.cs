@@ -23,7 +23,7 @@ public class GetOrderByIdQueryHandler(IOrderRepository orderRepository)
                 TenantId = order.TenantId,
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
-                Status = order.Status,
+                Status = order.Status.ToString(),
                 Items =
                 [
                     .. order.Items.Select(i => new OrderItemDto

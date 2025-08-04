@@ -2,7 +2,7 @@
 using Modules.Orders.Domain.Enums;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using Shared.Enums;
+using Shared.Domain.Enums;
 
 namespace Modules.Orders.Infrastructure.Persistence.Seed;
 
@@ -29,10 +29,10 @@ public static class OrdersDbSeeder
         {
             Id = ObjectId.GenerateNewId().ToString(),
             CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
             TenantId = tenantId,
             ClientId = ObjectId.GenerateNewId().ToString(),
         };
+        order1.UpdateTimestamps();
         order1.UpdateStatus(OrderStatus.Pending);
         order1.UpdateItems(
             [
@@ -57,10 +57,10 @@ public static class OrdersDbSeeder
         {
             Id = ObjectId.GenerateNewId().ToString(),
             CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
             TenantId = tenantId,
             ClientId = ObjectId.GenerateNewId().ToString(),
         };
+        order2.UpdateTimestamps();
         order2.UpdateStatus(OrderStatus.Delivered);
         order2.UpdateItems(
             [
@@ -81,7 +81,36 @@ public static class OrdersDbSeeder
             ]
         );
 
-        List<Order> fakeOrders = [order1, order2];
+        Order order3 = new()
+        {
+            Id = ObjectId.GenerateNewId().ToString(),
+            CreatedAt = DateTime.UtcNow,
+            TenantId = tenantId,
+            ClientId = ObjectId.GenerateNewId().ToString(),
+            IsDeleted = true,
+        };
+        order3.UpdateTimestamps();
+        order3.UpdateStatus(OrderStatus.Cancelled);
+        order3.UpdateItems(
+            [
+                new OrderItem
+                {
+                    Id = ObjectId.GenerateNewId().ToString(),
+                    ProductName = "Água Mineral",
+                    Quantity = 1,
+                    UnitPrice = 2.0m,
+                },
+                new OrderItem
+                {
+                    Id = ObjectId.GenerateNewId().ToString(),
+                    ProductName = "Sanduíche Natural",
+                    Quantity = 1,
+                    UnitPrice = 8.0m,
+                },
+            ]
+        );
+
+        List<Order> fakeOrders = [order1, order2, order3];
         await context.Orders.InsertManyAsync(fakeOrders);
     }
 }

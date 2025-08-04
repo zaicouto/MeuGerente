@@ -1,8 +1,8 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using Shared.Enums;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using Shared.Domain.Enums;
 
 namespace Modules.Users.Infrastructure.Security;
 

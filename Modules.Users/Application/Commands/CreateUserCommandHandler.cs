@@ -14,13 +14,12 @@ public class CreateUserCommandHandler(IAuthRepository authRepository, IPasswordH
         {
             Id = ObjectId.GenerateNewId().ToString(),
             CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
             TenantId = ObjectId.GenerateNewId().ToString(),
             Email = request.Email,
             FirstName = request.FirstName,
             LastName = request.LastName,
         };
-
+        user.UpdateTimestamps();
         user.SetPassword(request.Password, hasher);
 
         await authRepository.InsertAsync(user);

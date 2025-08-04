@@ -1,0 +1,13 @@
+{
+  "$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
+  "tasks": [
+    {
+      "name": "Formatar arquivos C# staged com CSharpier (PowerShell)",
+      "command": "powershell",
+      "args": [
+        "-Command",
+        "git diff --cached --name-only --diff-filter=ACM | Where-Object { $_ -like '*.cs' } | ForEach-Object { dotnet csharpier format $_ }; git diff --cached --name-only --diff-filter=ACM | Where-Object { $_ -like '*.cs' } | ForEach-Object { git add $_ }"
+      ]
+    }
+  ]
+}

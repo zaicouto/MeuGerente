@@ -3,7 +3,7 @@ using Modules.Orders.Domain.Entities;
 using Modules.Orders.Domain.Exceptions;
 using Modules.Orders.Domain.Interfaces;
 using MongoDB.Bson;
-using Shared.Interfaces;
+using Shared.Domain.Interfaces;
 
 namespace Modules.Orders.Application.Commands;
 

@@ -1,6 +1,6 @@
 ﻿using Modules.Orders.Domain.Enums;
 using MongoDB.Bson.Serialization.Attributes;
-using Shared.Abstractions;
+using Shared.Domain.Abstractions;
 
 namespace Modules.Orders.Domain.Entities;
 
