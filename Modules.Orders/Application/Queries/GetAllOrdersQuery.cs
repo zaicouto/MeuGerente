@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Modules.Orders.Application.DTOs;
-using Shared.Domain.ValueObjects;
 
 namespace Modules.Orders.Application.Queries;
 
