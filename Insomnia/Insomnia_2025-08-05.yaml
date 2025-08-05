@@ -1,0 +1,284 @@
+type: collection.insomnia.rest/5.0
+name: Core Web API
+meta:
+  id: wrk_de4bbc8afb554414963d40072b8807fc
+  created: 1753050741145
+  modified: 1753395581654
+collection:
+  - name: Pedidos
+    meta:
+      id: fld_b0c3afe313484d5397dddc1a982079a8
+      created: 1754426753095
+      modified: 1754426753095
+      sortKey: -1754426753095
+    children:
+      - url: "{{ _.base_url }}/api/orders/:order_id"
+        name: Busca um pedido pelo ID
+        meta:
+          id: req_bbdbc3edd1044254a78f4883b5dcbe90
+          created: 1753051084395
+          modified: 1754426806490
+          isPrivate: false
+          sortKey: -1754426777681
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ _.jwt_token }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: order_id
+            value: "{{ _.order_id }}"
+      - url: "{{ _.base_url }}/api/orders"
+        name: Cria um pedido
+        meta:
+          id: req_f126716e39944da39f9b6b688402c6c7
+          created: 1753054215341
+          modified: 1754426812323
+          isPrivate: false
+          sortKey: -1754426777656
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"clientId": "{{ _.client_id }}",
+              "items": [
+                {
+                  "productName": "Ensopado Suíno",
+                  "quantity": 1,
+                  "unitPrice": 22.00
+                }
+              ]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ _.jwt_token }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/api/orders/resetdb"
+        name: Reseta a collection orders
+        meta:
+          id: req_81ba4d36e25a432e96d10578cc6ed774
+          created: 1753054784166
+          modified: 1754426786712
+          isPrivate: false
+          sortKey: -1754426777631
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/api/orders"
+        name: Lê os pedidos
+        meta:
+          id: req_7070e1b21abc42da84552091129d9da5
+          created: 1754263644866
+          modified: 1754426804386
+          isPrivate: false
+          sortKey: -1754426777731
+        method: GET
+        parameters:
+          - id: pair_f4a8f62e329a4431bb6e89beaa4292d0
+            name: pagenumber
+            value: "1"
+            disabled: false
+          - id: pair_8b160a106c0f4822b584e7fe6a6a36f6
+            name: pagesize
+            value: "10"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ _.jwt_token }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/api/orders/:order_id"
+        name: Atualiza um pedido
+        meta:
+          id: req_2434d62131af44949a981770b6ef595e
+          created: 1754356484425
+          modified: 1754426780221
+          isPrivate: false
+          sortKey: -1754426777431
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"status": "Pending",
+            	"items": [
+            		{
+            			"productName": "Suco Natural",
+            			"quantity": 1,
+            			"unitPrice": 7
+            		},
+            		{
+            			"productName": "Bolo de Cenoura",
+            			"quantity": 2,
+            			"unitPrice": 4
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ _.jwt_token }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: order_id
+            value: "{{ _.order_id }}"
+      - url: "{{ _.base_url }}/api/orders/:order_id"
+        name: Exclui um pedido
+        meta:
+          id: req_64d374ffd2a64d75934b047bc416189b
+          created: 1754424519122
+          modified: 1754426777456
+          isPrivate: false
+          sortKey: -1754426777331
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ _.jwt_token }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: order_id
+            value: 6892689dbd7b39950891397f
+  - name: Auth
+    meta:
+      id: fld_90a3a20a1aea4653887d95d3931559e9
+      created: 1754426836528
+      modified: 1754426836528
+      sortKey: -1754426836528
+    children:
+      - url: "{{ _.base_url }}/api/auth/login"
+        name: Login
+        meta:
+          id: req_deea177d3bf0455ab66c7d28f2b8df33
+          created: 1753972380545
+          modified: 1754426841629
+          isPrivate: false
+          sortKey: -1754426841554
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"email": "admin@email.com",
+            	"password": "Pass@12345"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - url: "{{ _.base_url }}/healthcheck"
+    name: Healthcheck
+    meta:
+      id: req_ba2f6edb44cb4013be15ba6ba934b6f1
+      created: 1753050741222
+      modified: 1753054408644
+      isPrivate: false
+      sortKey: -1753050741223
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/11.3.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_5ff9fa7c35f599ccaae368e67c3147ede7b20de9
+    created: 1753050741154
+    modified: 1753050741154
+environments:
+  name: Base Environment
+  meta:
+    id: env_5ff9fa7c35f599ccaae368e67c3147ede7b20de9
+    created: 1753050741149
+    modified: 1753050741149
+    isPrivate: false
+  subEnvironments:
+    - name: MeuGerente DEV
+      meta:
+        id: env_06e9eaee8e724f1a8e821071f073c55c
+        created: 1753054243082
+        modified: 1754424771828
+        isPrivate: false
+        sortKey: 1753054243082
+      data:
+        base_url: https://localhost:5001
+        jwt_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmNDFmMDg4YS1hZDE5LTQzMjMtYjcwNC1kM2VkMzA4NzM3NjciLCJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsInRlbmFudGlkIjoiNjg4ZDg0MDk4YzRhMzM0YTZhNWYwYWZhIiwicm9sZSI6InN1cGVyYWRtaW4iLCJleHAiOjE3NTQ1MTExNTcsImlzcyI6Im1ldWdlcmVudGUuYXBpIiwiYXVkIjoibWV1Z2VyZW50ZS5jbGllbnQifQ.pII7HCdhGTqzubCOG7mC1SwCCRgurGIXiPjgtmr2Qd4
+        client_id: 688febbcd1e7698280e81af2
+        order_id: 6891203936402f6df75d76ea
