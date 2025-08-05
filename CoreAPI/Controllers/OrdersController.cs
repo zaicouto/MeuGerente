@@ -88,7 +88,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
         [FromQuery] int pageSize = 10
     )
     {
-        object? orders = await mediator.Send(new GetAllOrdersQuery(pageNumber, pageSize));
+        var orders = await mediator.Send(new GetAllOrdersQuery(pageNumber, pageSize));
         return Ok(new { orders });
     }
 

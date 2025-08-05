@@ -1,0 +1,33 @@
+﻿using Modules.Orders.Application.DTOs;
+using Shared.Domain.ValueObjects;
+
+namespace Modules.Orders.Application.Extensions;
+
+public static class OrdersResponseDtoExtensions
+{
+    public static OrdersResponseDto ToOrdersResponseDto(this PaginatedList<OrderDto> paginated)
+    {
+        var items = paginated
+            .Items.Select(order => new PublicOrderDto
+            {
+                Id = order.Id,
+                CreatedAt = order.CreatedAt,
+                UpdatedAt = order.UpdatedAt,
+                Status = order.Status,
+                Items = order.Items,
+            })
+            .ToList();
+
+        return new OrdersResponseDto
+        {
+            TenantId = paginated.Items.Count > 0 ? paginated.Items[0].TenantId : string.Empty,
+            Items = items,
+            PageNumber = paginated.PageNumber,
+            PageSize = paginated.PageSize,
+            TotalCount = paginated.TotalCount,
+            TotalPages = paginated.TotalPages,
+            HasPreviousPage = paginated.HasPreviousPage,
+            HasNextPage = paginated.HasNextPage,
+        };
+    }
+}

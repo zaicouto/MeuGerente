@@ -27,7 +27,7 @@ public static class OrdersDbSeeder
 
         Order order1 = new()
         {
-            Id = ObjectId.GenerateNewId().ToString(),
+            Id = "6891203936402f6df75d76ee",
             CreatedAt = DateTime.UtcNow,
             TenantId = tenantId,
             ClientId = ObjectId.GenerateNewId().ToString(),
@@ -55,7 +55,7 @@ public static class OrdersDbSeeder
 
         Order order2 = new()
         {
-            Id = ObjectId.GenerateNewId().ToString(),
+            Id = "6891203936402f6df75d76ea",
             CreatedAt = DateTime.UtcNow,
             TenantId = tenantId,
             ClientId = ObjectId.GenerateNewId().ToString(),

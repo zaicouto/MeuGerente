@@ -5,10 +5,19 @@ namespace Modules.Orders.Application.DTOs;
 
 public class OrderDto
 {
-    public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
+    public required string Id { get; set; }
     public required string TenantId { get; set; }
     public required DateTime CreatedAt { get; set; }
     public required DateTime UpdatedAt { get; set; }
-    public string Status { get; set; } = OrderStatus.Pending.ToString();
+    public required string Status { get; set; }
+    public List<OrderItemDto> Items { get; set; } = [];
+}
+
+public class PublicOrderDto
+{
+    public required string Id { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public required string Status { get; set; }
     public List<OrderItemDto> Items { get; set; } = [];
 }
