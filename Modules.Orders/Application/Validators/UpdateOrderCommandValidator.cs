@@ -7,7 +7,11 @@ public class UpdateOrderCommandValidator : AbstractValidator<UpdateOrderCommand>
 {
     public UpdateOrderCommandValidator()
     {
-        RuleFor(x => x.OrderId).NotEmpty().WithMessage("O ID do pedido é obrigatório.");
+        RuleFor(x => x.OrderId)
+            .NotEmpty()
+            .WithMessage("O ID do pedido é obrigatório.")
+            .Length(24)
+            .WithMessage("O ID do pedido deve ter exatamente 24 caracteres.");
 
         RuleFor(x => x.Status).IsInEnum().WithMessage("Status do pedido inválido.");
 

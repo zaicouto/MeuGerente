@@ -33,6 +33,12 @@ public abstract class EntityBase
     [BsonRepresentation(BsonType.Boolean)]
     public bool IsDeleted { get; set; } = false;
 
+    public void SoftDelete()
+    {
+        IsDeleted = true;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public void UpdateTimestamps()
     {
         UpdatedAt = DateTime.UtcNow;
