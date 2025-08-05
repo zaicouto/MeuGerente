@@ -5,10 +5,12 @@ namespace Modules.Orders.Application.Extensions;
 
 public static class OrdersResponseDtoExtensions
 {
-    public static OrdersResponseDto ToOrdersResponseDto(this PaginatedList<OrderDto> paginated)
+    public static PaginatedOrdersResponseDto ToOrdersResponseDto(
+        this PaginatedList<OrderResponseDto> paginated
+    )
     {
-        var items = paginated
-            .Items.Select(order => new PublicOrderDto
+        List<OrderResponseWithoutTenantIdDto> items = paginated
+            .Items.Select(order => new OrderResponseWithoutTenantIdDto
             {
                 Id = order.Id,
                 CreatedAt = order.CreatedAt,
@@ -18,7 +20,7 @@ public static class OrdersResponseDtoExtensions
             })
             .ToList();
 
-        return new OrdersResponseDto
+        return new PaginatedOrdersResponseDto
         {
             TenantId = paginated.Items.Count > 0 ? paginated.Items[0].TenantId : string.Empty,
             Items = items,

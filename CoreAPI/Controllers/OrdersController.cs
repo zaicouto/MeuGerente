@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Modules.Orders.Application.Commands;
 using Modules.Orders.Application.DTOs;
 using Modules.Orders.Application.Queries;
+using Modules.Orders.Domain.Enums;
 using Modules.Orders.Infrastructure.Persistence;
 using Modules.Orders.Infrastructure.Persistence.Seed;
 using Shared.Domain.Abstractions;
@@ -28,10 +29,10 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     )]
     [SwaggerResponse(StatusCodes.Status201Created, "Pedido criado com sucesso.")]
     [Authorize]
-    public async Task<IActionResult> CreateAsync(CreateOrderCommand command)
+    public async Task<IActionResult> CreateAsync([FromBody] CreateOrderCommand command)
     {
         string id = await mediator.Send(command);
-        logger.LogInformation("Order created with ID: {OrderId}", id);
+        logger.LogInformation("Pedido criado com ID: {OrderId}.", id);
         return Ok(new { NewOrderId = id });
     }
 
@@ -46,16 +47,19 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     )]
     [SwaggerResponse(StatusCodes.Status200OK, "Pedido atualizado com sucesso.")]
     [Authorize]
-    public async Task<IActionResult> UpdateAsync(string orderId, UpdateOrderCommand command)
+    public async Task<IActionResult> UpdateAsync(
+        [FromRoute] string orderId,
+        [FromBody] UpdateOrderCommand command
+    )
     {
         command.OrderId = orderId;
         await mediator.Send(command);
-        logger.LogInformation("Order updated with ID: {OrderId}", orderId);
+        logger.LogInformation("Pedido atualizado com ID: {OrderId}.", orderId);
         return Ok(new { UpdatedOrder = true });
     }
 
     /// <summary>
-    /// Marca um pedido como excluído (soft delete).
+    /// Marca um pedido como excluído logicamente (soft delete).
     /// </summary>
     [HttpDelete("{orderId}")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
@@ -65,10 +69,10 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     )]
     [SwaggerResponse(StatusCodes.Status200OK, "Pedido marcado como excluído.")]
     [Authorize]
-    public async Task<IActionResult> SoftDeleteAsync(string orderId)
+    public async Task<IActionResult> SoftDeleteAsync([FromRoute] string orderId)
     {
         await mediator.Send(new SoftDeleteOrderCommand(orderId));
-        logger.LogInformation("Order soft deleted with ID: {OrderId}", orderId);
+        logger.LogInformation("Pedido marcado como excluído com ID: {OrderId}.", orderId);
         return Ok(new { DeletedOrder = true });
     }
 
@@ -76,7 +80,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     /// Busca todos os pedidos com paginação.
     /// </summary>
     [HttpGet]
-    [ProducesResponseType(typeof(PaginatedList<OrderDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PaginatedList<OrderResponseDto>), StatusCodes.Status200OK)]
     [SwaggerOperation(
         Summary = "Lista pedidos com paginação.",
         Description = "Lista todos os pedidos de forma paginada."
@@ -85,10 +89,20 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     [Authorize]
     public async Task<IActionResult> GetAllAsync(
         [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10
+        [FromQuery] int pageSize = 10,
+        [FromQuery] OrderStatus? status = null
     )
     {
-        var orders = await mediator.Send(new GetAllOrdersQuery(pageNumber, pageSize));
+        Console.WriteLine(status);
+        PaginatedOrdersResponseDto orders = await mediator.Send(
+            new GetAllOrdersQuery(pageNumber, pageSize)
+        );
+        logger.LogInformation(
+            "Encontrados {OrderCount} pedidos para a página {PageNumber} com {PageSize} itens por página.",
+            orders.TotalCount,
+            pageNumber,
+            pageSize
+        );
         return Ok(new { orders });
     }
 
@@ -96,35 +110,36 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     /// Busca um pedido pelo ID.
     /// </summary>
     [HttpGet("{orderId}")]
-    [ProducesResponseType(typeof(OrderDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status200OK)]
     [SwaggerOperation(
         Summary = "Busca um pedido pelo ID.",
         Description = "Exibe os detalhes de um pedido."
     )]
     [SwaggerResponse(StatusCodes.Status200OK, "Pedido encontrado.")]
     [Authorize]
-    public async Task<IActionResult> GetByIdAsync(string orderId)
+    public async Task<IActionResult> GetByIdAsync([FromRoute] string orderId)
     {
-        OrderDto order = await mediator.Send(new GetOrderByIdQuery(orderId));
+        OrderResponseDto order = await mediator.Send(new GetOrderByIdQuery(orderId));
+        logger.LogInformation("Pedido encontrado com ID: {OrderId}.", orderId);
         return Ok(new { order });
     }
 
     /// <summary>
-    /// [Dev Only] Redefine a collection de pedidos.
+    /// [Dev Only] Redefine a coleção de pedidos.
     /// </summary>
     [HttpPost("resetdb")]
     [DevOnly]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [SwaggerOperation(
-        Summary = "[Dev Only] Redefine a collection de pedidos.",
-        Description = "Apaga todos os documentos e depois popula a collection com dados de teste."
+        Summary = "[Dev Only] Reinicia a coleção de pedidos.",
+        Description = "Apaga todos os documentos e depois popula a coleção com dados de teste."
     )]
-    [SwaggerResponse(StatusCodes.Status200OK, "Reset da collection finalizado.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Reinício da coleção finalizado.")]
     public async Task<IActionResult> ResetDbAsync([FromServices] OrdersDbContext context)
     {
         await OrdersDbSeeder.TruncateAsync(context);
         await OrdersDbSeeder.SeedAsync(context);
-        logger.LogInformation("Collection orders reseted.");
-        return Ok(new { Result = "Reset da collection orders finalizado!" });
+        logger.LogInformation("Coleção de pedidos reiniciada.");
+        return Ok(new { Result = "Reinício da coleção de pedidos finalizada!" });
     }
 }

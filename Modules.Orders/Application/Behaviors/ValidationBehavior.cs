@@ -1,11 +1,14 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Modules.Orders.Application.Behaviors;
 
-public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
-    : IPipelineBehavior<TRequest, TResponse>
+public class ValidationBehavior<TRequest, TResponse>(
+    IEnumerable<IValidator<TRequest>> validators,
+    ILogger<ValidationBehavior<TRequest, TResponse>> logger
+) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
     public async Task<TResponse> Handle(
@@ -27,6 +30,7 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
         if (failures.Count > 0)
             throw new ValidationException(failures);
 
+        logger.LogInformation("Requisição {RequestType} validada.", typeof(TRequest).Name);
         return await next(CancellationToken.None);
     }
 }

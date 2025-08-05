@@ -9,22 +9,25 @@ using Shared.Domain.ValueObjects;
 namespace Modules.Orders.Application.Queries;
 
 public class GetAllOrdersQueryHandler(IOrderRepository orderRepository, IMapper mapper)
-    : IRequestHandler<GetAllOrdersQuery, OrdersResponseDto>
+    : IRequestHandler<GetAllOrdersQuery, PaginatedOrdersResponseDto>
 {
-    public async Task<OrdersResponseDto> Handle(
+    public async Task<PaginatedOrdersResponseDto> Handle(
         GetAllOrdersQuery request,
         CancellationToken cancellationToken
     )
     {
+        request.PageNumber = Math.Clamp(request.PageNumber, 1, 1000);
+        request.PageSize = Math.Clamp(request.PageSize, 1, 100);
+
         PaginatedList<Order> paginated = await orderRepository.GetAllAsync(
             request.PageNumber,
             request.PageSize,
             cancellationToken
         );
 
-        List<OrderDto> dtoList = mapper.Map<List<OrderDto>>(paginated.Items);
+        List<OrderResponseDto> dtoList = mapper.Map<List<OrderResponseDto>>(paginated.Items);
 
-        return new PaginatedList<OrderDto>(
+        return new PaginatedList<OrderResponseDto>(
             dtoList,
             paginated.TotalCount,
             paginated.PageNumber,

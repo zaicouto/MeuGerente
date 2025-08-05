@@ -8,9 +8,9 @@ public class OrderProfile : Profile
 {
     public OrderProfile()
     {
-        CreateMap<OrderItem, OrderItemDto>().ReverseMap();
+        CreateMap<OrderItem, OrderItemResponseDto>().ReverseMap();
 
-        CreateMap<Order, OrderDto>()
+        CreateMap<Order, OrderResponseDto>()
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items))
             .ReverseMap();

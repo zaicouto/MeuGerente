@@ -1,9 +1,9 @@
 ﻿namespace Modules.Orders.Application.DTOs;
 
-public class OrdersResponseDto
+public record PaginatedOrdersResponseDto
 {
     public string TenantId { get; set; } = string.Empty;
-    public List<PublicOrderDto> Items { get; set; } = [];
+    public List<OrderResponseWithoutTenantIdDto> Items { get; set; } = [];
     public int PageNumber { get; set; }
     public int PageSize { get; set; }
     public long TotalCount { get; set; }

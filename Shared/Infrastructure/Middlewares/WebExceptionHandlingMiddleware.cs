@@ -75,7 +75,7 @@ public class WebExceptionHandlingMiddleware(RequestDelegate next, ILogger logger
                 break;
         }
 
-        var problemDetails = new ProblemDetails
+        ProblemDetails problemDetails = new ProblemDetails
         {
             Type = $"https://httpstatuses.io/{(int)status}",
             Title = title,

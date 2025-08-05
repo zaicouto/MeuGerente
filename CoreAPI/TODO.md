@@ -14,16 +14,16 @@
 
 ## 📌 2. Multi-Tenant
 - [x] Toda entidade principal (`Order`, `Product`, `User`, `Inventory`) deve ter `TenantId`.
-- [ ] Middleware global para **resolver `TenantId`** do JWT.
-- [ ] Filtros automáticos para queries (`Query Filters`).
-- [ ] Estratégia para **Seed de Tenant/Admin**.
+- [x] Middleware global para **resolver `TenantId`** do JWT.
+- [x] Filtros automáticos para queries (`Query Filters`).
+- [x] Estratégia para **Seed de Tenant/Admin**.
 
 ---
 
 ## 📌 3. Autenticação e Autorização
-- [ ] Implementar **JWT Auth** com `TenantId` + `Roles` embutidos.
+- [x] Implementar **JWT Auth** com `TenantId` + `Roles` embutidos.
 - [ ] Endpoint para **login** e **refresh token**.
-- [ ] Roles: `Admin`, `Gerente`, `Funcionário`, `Caixa`, etc.
+- [x] Roles: `Admin`, `Gerente`, `Funcionário`, `Caixa`, etc.
 - [ ] Policy-based authorization para proteger endpoints sensíveis.
 
 ---
@@ -31,8 +31,8 @@
 ## 📌 4. CRUD Básico
 - [ ] CRUD **Orders**
   - [x] Criar pedido
-  - [ ] Atualizar status
-  - [ ] Cancelar pedido
+  - [x] Atualizar status
+  - [x] Cancelar pedido
   - [ ] Consultar por status, período
 - [ ] CRUD **Products**
   - [ ] Adicionar produto

@@ -8,5 +8,5 @@ public class UpdateOrderCommand : IRequest
 {
     public string OrderId { get; set; } = string.Empty;
     public OrderStatus Status { get; set; }
-    public ICollection<OrderItemDto> Items { get; set; } = [];
+    public ICollection<OrderItemResponseDto> Items { get; set; } = [];
 }

@@ -7,9 +7,9 @@ using Modules.Orders.Domain.Interfaces;
 namespace Modules.Orders.Application.Queries;
 
 public class GetOrderByIdQueryHandler(IOrderRepository orderRepository)
-    : IRequestHandler<GetOrderByIdQuery, OrderDto>
+    : IRequestHandler<GetOrderByIdQuery, OrderResponseDto>
 {
-    public async Task<OrderDto> Handle(
+    public async Task<OrderResponseDto> Handle(
         GetOrderByIdQuery request,
         CancellationToken cancellationToken
     )
@@ -17,7 +17,7 @@ public class GetOrderByIdQueryHandler(IOrderRepository orderRepository)
         Order? order = await orderRepository.GetByIdAsync(request.Id);
         return order == null
             ? throw new OrderNotFoundException()
-            : new OrderDto
+            : new OrderResponseDto
             {
                 Id = order.Id,
                 TenantId = order.TenantId,
@@ -26,7 +26,7 @@ public class GetOrderByIdQueryHandler(IOrderRepository orderRepository)
                 Status = order.Status.ToString(),
                 Items =
                 [
-                    .. order.Items.Select(i => new OrderItemDto
+                    .. order.Items.Select(i => new OrderItemResponseDto
                     {
                         ProductName = i.ProductName,
                         Quantity = i.Quantity,

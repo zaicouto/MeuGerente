@@ -1,6 +1,6 @@
 ﻿namespace Modules.Orders.Application.DTOs;
 
-public class OrderItemDto
+public record OrderItemResponseDto
 {
     public required string ProductName { get; set; }
     public required int Quantity { get; set; }
