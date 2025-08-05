@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Shared.Application.DTOs;
 using Shared.Domain.Exceptions;
@@ -74,20 +75,20 @@ public class WebExceptionHandlingMiddleware(RequestDelegate next, ILogger logger
                 break;
         }
 
-        var problemDetails = new
+        var problemDetails = new ProblemDetails
         {
-            type = $"https://httpstatuses.io/{(int)status}",
-            title,
-            status = (int)status,
-            detail = exception.Message,
-            instance = context.Request.Path,
+            Type = $"https://httpstatuses.io/{(int)status}",
+            Title = title,
+            Status = (int)status,
+            Detail = exception.Message,
+            Instance = context.Request.Path,
         };
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)status;
 
         return context.Response.WriteAsJsonAsync(
-            new ApiResponse(false, "Uma exceção foi lançada.", problemDetails)
+            new ApiResponse(false, "Uma exceção web foi lançada.", problemDetails)
         );
     }
 }

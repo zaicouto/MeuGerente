@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Shared.Domain.Enums;
 
 namespace Shared.Infrastructure.Middlewares;
 
@@ -15,9 +16,7 @@ public class RolesMiddleware(RequestDelegate next)
             JwtSecurityTokenHandler handler = new();
             JwtSecurityToken jwtToken = handler.ReadJwtToken(token);
 
-            Claim? roleClaim = jwtToken.Claims.FirstOrDefault(c =>
-                c.Type == ClaimTypes.Role
-            );
+            Claim? roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Role);
             Console.WriteLine("Role do token : " + roleClaim);
             if (roleClaim != null)
             {

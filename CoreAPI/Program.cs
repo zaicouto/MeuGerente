@@ -1,9 +1,11 @@
 ﻿using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -89,7 +91,13 @@ try
 
     // Add services to the container.
 
-    builder.Services.AddControllers();
+    builder
+        .Services.AddControllers()
+        .AddJsonOptions(opts =>
+        {
+            opts.JsonSerializerOptions.UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow;
+            opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
@@ -214,9 +222,9 @@ try
     if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Testing")
     {
         using IServiceScope scope = app.Services.CreateScope();
-        OrdersDbContext dbContext = scope.ServiceProvider.GetRequiredService<OrdersDbContext>();
 
         // Populate fake data
+        OrdersDbContext dbContext = scope.ServiceProvider.GetRequiredService<OrdersDbContext>();
         await OrdersDbSeeder.SeedAsync(dbContext);
 
         AuthDbContext authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
@@ -238,10 +246,10 @@ try
     app.UseMiddleware<RolesMiddleware>();
     app.UseMiddleware<TenantMiddleware>();
 
+    app.UseMiddleware<RequestLoggingMiddleware>(Log.Logger);
+
     app.UseMiddleware<ValidationExceptionMiddleware>(Log.Logger);
     app.UseMiddleware<WebExceptionHandlingMiddleware>(Log.Logger);
-
-    app.UseMiddleware<RequestLoggingMiddleware>(Log.Logger);
 
     // Middleware customizado para capturar exceções de debug.
     app.Use(

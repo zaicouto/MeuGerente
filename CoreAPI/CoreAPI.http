@@ -1,6 +1,45 @@
-@CoreAPI_HostAddress = http://localhost:5248
+@CoreAPI_HostAddress = https://localhost:7273
 
-GET {{CoreAPI_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{CoreAPI_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  //LoginDto
+}
+
+###
+
+GET {{CoreAPI_HostAddress}}/api/orders
+
+###
+
+POST {{CoreAPI_HostAddress}}/api/orders
+Content-Type: application/json
+
+{
+  //CreateOrderCommand
+}
+
+###
+
+POST {{CoreAPI_HostAddress}}/api/orders/resetdb
+
+###
+
+@orderId=string
+DELETE {{CoreAPI_HostAddress}}/api/orders/{{orderId}}
+
+###
+
+GET {{CoreAPI_HostAddress}}/api/orders/{{orderId}}
+
+###
+
+PUT {{CoreAPI_HostAddress}}/api/orders/{{orderId}}
+Content-Type: application/json
+
+{
+  //UpdateOrderCommand
+}
 
 ###

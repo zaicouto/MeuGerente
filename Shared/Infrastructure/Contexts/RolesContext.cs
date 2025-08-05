@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Shared.Domain.Enums;
+using Shared.Domain.Extensions;
 using Shared.Domain.Interfaces;
 
 namespace Shared.Infrastructure.Contexts;
@@ -11,12 +12,12 @@ public class RolesContext(IHttpContextAccessor accessor) : IRolesContext
         get
         {
             string? roleString = accessor.HttpContext?.Items["Role"]?.ToString();
-            if (Enum.TryParse(roleString, true, out UserRoles parsedRole))
+            if (string.IsNullOrEmpty(roleString))
             {
-                return parsedRole;
+                return UserRoles.Default;
             }
 
-            return UserRoles.Default;
+            return roleString.ToUserRolesEnum();
         }
     }
 

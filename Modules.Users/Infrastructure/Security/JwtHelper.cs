@@ -16,10 +16,10 @@ public class JwtHelper
     {
         Claim[] claims =
         [
-            new(ClaimTypes.Email, email),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(CustomClaimTypes.Email, email),
             new(CustomClaimTypes.TenantId, tenantId),
-            new(ClaimTypes.Role, role.ToString()),
+            new(CustomClaimTypes.Role, role.ToString().ToLower()),
         ];
 
         string? jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
