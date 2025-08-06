@@ -13,7 +13,11 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace CoreAPI.Controllers;
 
 [Route("api/auth")]
-public class AuthController(IMediator mediator, IPasswordHasher hasher) : ApiControllerBase
+public class AuthController(
+    IMediator mediator,
+    IPasswordHasher hasher,
+    ILogger<AuthController> logger
+) : ApiControllerBase
 {
     /// <summary>
     /// Realiza login de usuário e retorna um JWT válido.
@@ -43,19 +47,19 @@ public class AuthController(IMediator mediator, IPasswordHasher hasher) : ApiCon
         {
             string adminTenantId = SuperAdminCreds.TenantId;
             token = JwtHelper.GenerateJwtToken(dto.Email, adminTenantId, UserRoles.SuperAdmin);
-
+            logger.LogInformation("Login de SuperAdmin realizado com sucesso: {Email}", dto.Email);
             return Ok(new LoginResponseDto(adminTenantId, token));
         }
 #endif
 
         User user = await mediator.Send(new GetUserByEmailQuery(dto.Email));
-
         if (!user.VerifyPassword(dto.Password, hasher))
         {
             throw new UnauthorizedException();
         }
 
         token = JwtHelper.GenerateJwtToken(dto.Email, user.TenantId);
+        logger.LogInformation("Login realizado com sucesso: {Email}", dto.Email);
         return Ok(new LoginResponseDto(user.TenantId, token));
     }
 }

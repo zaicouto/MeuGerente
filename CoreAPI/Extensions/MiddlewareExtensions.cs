@@ -8,12 +8,16 @@ public static class MiddlewareExtensions
 {
     public static IApplicationBuilder UseCustomMiddlewares(this IApplicationBuilder app)
     {
+        // Middlewares para autenticação e autorização
         app.UseMiddleware<RolesMiddleware>();
         app.UseMiddleware<TenantMiddleware>();
+
+        // Middlewares para tratamento de exceções e logging
         app.UseMiddleware<RequestLoggingMiddleware>(Log.Logger);
         app.UseMiddleware<ValidationExceptionMiddleware>(Log.Logger);
         app.UseMiddleware<WebExceptionHandlingMiddleware>(Log.Logger);
 
+        // Middleware para capturar exceções de debug e retornar detalhes no response
         app.Use(
             async (context, next) =>
             {

@@ -18,9 +18,6 @@ public class CreateOrderCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        //throw new DebugException("Tenant ID", tenantContext.TenantId ?? "nulo");
-        //throw new DebugException("TenantContext", tenantContext.GetInfo());
-
         string tenantId =
             tenantContext.TenantId
             ?? throw new OrderBadRequestException("Não foi possível encontrar o ID do locatário.");
@@ -45,9 +42,7 @@ public class CreateOrderCommandHandler(
                 }),
             ]
         );
-
         await orderRepository.InsertAsync(order);
-
         return order.Id;
     }
 }

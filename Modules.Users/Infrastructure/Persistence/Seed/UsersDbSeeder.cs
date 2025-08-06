@@ -7,15 +7,15 @@ using Shared.Domain.Enums;
 
 namespace Modules.Users.Infrastructure.Persistence.Seed;
 
-public static class AuthDbSeeder
+public static class UsersDbSeeder
 {
-    public static async Task TruncateAsync(AuthDbContext context)
+    public static async Task TruncateAsync(UsersDbContext context)
     {
         // Delete all records from collection
         await context.Users.DeleteManyAsync(FilterDefinition<User>.Empty);
     }
 
-    public static async Task SeedAsync(AuthDbContext context)
+    public static async Task SeedAsync(UsersDbContext context)
     {
         bool hasAny = await context.Users.Find(_ => true).AnyAsync();
         if (hasAny)

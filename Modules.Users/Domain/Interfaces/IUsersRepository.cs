@@ -2,7 +2,7 @@
 
 namespace Modules.Users.Domain.Interfaces;
 
-public interface IAuthRepository
+public interface IUsersRepository
 {
     Task InsertAsync(User user);
     Task UpdateAsync(User user);

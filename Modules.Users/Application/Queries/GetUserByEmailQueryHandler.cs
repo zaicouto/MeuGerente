@@ -5,7 +5,7 @@ using Shared.Domain.Exceptions;
 
 namespace Modules.Users.Application.Queries;
 
-public class GetUserByEmailQueryHandler(IAuthRepository authRepository)
+public class GetUserByEmailQueryHandler(IUsersRepository authRepository)
     : IRequestHandler<GetUserByEmailQuery, User>
 {
     public async Task<User> Handle(GetUserByEmailQuery request, CancellationToken cancellationToken)

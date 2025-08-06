@@ -3,7 +3,7 @@ using MongoDB.Driver;
 
 namespace Modules.Users.Infrastructure.Persistence;
 
-public class AuthDbContext(IMongoClient client, string databaseName)
+public class UsersDbContext(IMongoClient client, string databaseName)
 {
     private readonly IMongoDatabase _database = client.GetDatabase(databaseName);
 

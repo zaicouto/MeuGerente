@@ -5,7 +5,7 @@ using MongoDB.Driver;
 
 namespace Modules.Users.Infrastructure.Repositories;
 
-public class AuthRepository(AuthDbContext context) : IAuthRepository
+public class UsersRepository(UsersDbContext context) : IUsersRepository
 {
     private readonly IMongoCollection<User> _users = context.Users;
 

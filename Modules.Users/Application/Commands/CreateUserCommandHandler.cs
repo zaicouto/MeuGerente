@@ -5,7 +5,7 @@ using MongoDB.Bson;
 
 namespace Modules.Users.Application.Commands;
 
-public class CreateUserCommandHandler(IAuthRepository authRepository, IPasswordHasher hasher)
+public class CreateUserCommandHandler(IUsersRepository authRepository, IPasswordHasher hasher)
     : IRequestHandler<CreateUserCommand, string>
 {
     public async Task<string> Handle(CreateUserCommand request, CancellationToken cancellationToken)

@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
-using Serilog;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Shared.Infrastructure.Middlewares;
 
-public class RequestLoggingMiddleware(RequestDelegate next, ILogger logger)
+public class RequestLoggingMiddleware(
+    RequestDelegate next,
+    ILogger<RequestLoggingMiddleware> logger
+)
 {
     public async Task InvokeAsync(HttpContext context)
     {
@@ -21,10 +24,9 @@ public class RequestLoggingMiddleware(RequestDelegate next, ILogger logger)
 
         context.Response.Headers["X-Correlation-ID"] = correlationId;
 
-        string userId =
-            context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
+        string userId = context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
 
-        logger.Information(
+        logger.LogInformation(
             "Request started: {Method} {Path} from {IP} | CorrelationId={CorrelationId} | UserId={UserId}",
             method,
             path,
@@ -40,7 +42,7 @@ public class RequestLoggingMiddleware(RequestDelegate next, ILogger logger)
         int statusCode = context.Response.StatusCode;
         long elapsedMs = stopwatch.ElapsedMilliseconds;
 
-        logger.Information(
+        logger.LogInformation(
             "Request finished: {Method} {Path} → {StatusCode} in {ElapsedMs}ms | CorrelationId={CorrelationId} | UserId={UserId}",
             method,
             path,

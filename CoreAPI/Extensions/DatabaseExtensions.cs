@@ -18,11 +18,10 @@ public static class DatabaseExtensions
     )
     {
         string? connectionString = Environment.GetEnvironmentVariable("MONGO_CONNECTION_STRING");
-        string? databaseName = Environment.GetEnvironmentVariable("MONGO_INITDB_DATABASE");
-
         if (string.IsNullOrEmpty(connectionString))
             throw new InvalidOperationException("MONGO_CONNECTION_STRING não definida.");
 
+        string? databaseName = Environment.GetEnvironmentVariable("MONGO_INITDB_DATABASE");
         if (string.IsNullOrEmpty(databaseName))
             throw new InvalidOperationException("MONGO_INITDB_DATABASE não definida.");
 
@@ -32,19 +31,21 @@ public static class DatabaseExtensions
 
         services.AddSingleton<IMongoClient>(_ => new MongoClient(connectionString));
 
+        // Database Contexts
         services.AddSingleton(sp => new OrdersDbContext(
             sp.GetRequiredService<IMongoClient>(),
             databaseName
         ));
-
-        services.AddSingleton(sp => new AuthDbContext(
+        services.AddSingleton(sp => new UsersDbContext(
             sp.GetRequiredService<IMongoClient>(),
             databaseName
         ));
 
+        // Repositories
         services.AddScoped<IOrderRepository, OrderRepository>();
-        services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IUsersRepository, UsersRepository>();
 
+        // Other Contexts
         services.AddScoped<ITenantContext, TenantContext>();
         services.AddScoped<IRolesContext, RolesContext>();
     }

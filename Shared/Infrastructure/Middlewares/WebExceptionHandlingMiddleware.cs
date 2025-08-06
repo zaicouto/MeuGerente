@@ -1,13 +1,16 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Shared.Application.DTOs;
 using Shared.Domain.Exceptions;
 
 namespace Shared.Infrastructure.Middlewares;
 
-public class WebExceptionHandlingMiddleware(RequestDelegate next, ILogger logger)
+public class WebExceptionHandlingMiddleware(
+    RequestDelegate next,
+    ILogger<WebExceptionHandlingMiddleware> logger
+)
 {
     public async Task Invoke(HttpContext context)
     {
@@ -26,11 +29,11 @@ public class WebExceptionHandlingMiddleware(RequestDelegate next, ILogger logger
                     or ConflictException
             )
             {
-                logger.Warning(ex, "Aconteceu uma exceção de requisição web.");
+                logger.LogWarning(ex, "Aconteceu uma exceção de requisição web.");
             }
             else
             {
-                logger.Error(ex, "Aconteceu uma exceção não tratada.");
+                logger.LogError(ex, "Aconteceu uma exceção não tratada.");
             }
 
             await HandleExceptionAsync(context, ex);

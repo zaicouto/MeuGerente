@@ -11,10 +11,12 @@ public static class SeederExtensions
     {
         using IServiceScope scope = services.CreateScope();
 
+        // Pedidos
         OrdersDbContext ordersDb = scope.ServiceProvider.GetRequiredService<OrdersDbContext>();
         await OrdersDbSeeder.SeedAsync(ordersDb);
 
-        AuthDbContext authDb = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
-        await AuthDbSeeder.SeedAsync(authDb);
+        // Usuários
+        UsersDbContext usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+        await UsersDbSeeder.SeedAsync(usersDb);
     }
 }

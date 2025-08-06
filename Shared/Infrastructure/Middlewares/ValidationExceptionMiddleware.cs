@@ -1,11 +1,14 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using Shared.Application.DTOs;
 
 namespace Shared.Infrastructure.Middlewares;
 
-public class ValidationExceptionMiddleware(RequestDelegate next, ILogger logger)
+public class ValidationExceptionMiddleware(
+    RequestDelegate next,
+    ILogger<ValidationExceptionMiddleware> logger
+)
 {
     public async Task Invoke(HttpContext context)
     {
@@ -15,7 +18,7 @@ public class ValidationExceptionMiddleware(RequestDelegate next, ILogger logger)
         }
         catch (ValidationException ex)
         {
-            logger.Warning(
+            logger.LogWarning(
                 "ValidationException: {Errors} | Path={Path} | Method={Method}",
                 ex.Errors.Select(e => new { e.PropertyName, e.ErrorMessage }),
                 context.Request.Path,
@@ -36,7 +39,7 @@ public class ValidationExceptionMiddleware(RequestDelegate next, ILogger logger)
         }
         catch (Exception ex)
         {
-            logger.Error(
+            logger.LogError(
                 ex,
                 "Unhandled exception at {Path} | Method={Method}",
                 context.Request.Path,

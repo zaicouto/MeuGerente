@@ -5,6 +5,7 @@ using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+// Configura o Serilog para logging
 builder.ConfigureSerilog();
 
 builder
@@ -15,11 +16,13 @@ builder
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
+// Serviços personalizados
 builder.Services.AddCustomSwagger();
 builder.Services.AddJwtAuthentication();
 builder.Services.AddCustomHealthChecks();
 builder.Services.AddMongoDatabase(builder.Configuration);
 
+// Carrega os módulos dinamicamente a partir do AppDomain atual
 IEnumerable<Assembly> modules = AppDomain
     .CurrentDomain.GetAssemblies()
     .Where(a => a.FullName!.StartsWith("Modules"));
@@ -32,6 +35,7 @@ try
 {
     Log.Information("Iniciando aplicação...");
 
+    // Passos extras para configurar o ambiente de desenvolvimento
     if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Testing")
     {
         await app.Services.SeedTestDataAsync();
@@ -42,14 +46,18 @@ try
         });
     }
 
+    // Congigura os middlewares
     app.UseHttpsRedirection();
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseCustomMiddlewares();
 
+    // Configura o roteamento
     app.MapHealthChecks("/healthcheck");
     app.MapControllers();
 
+    // Inicia a aplicação
+    Log.Information("Aplicação iniciada com sucesso.");
     app.Run();
 
     Log.Information("Aplicação finalizada com sucesso.");

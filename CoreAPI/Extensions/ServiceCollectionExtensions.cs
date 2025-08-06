@@ -16,23 +16,28 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCoreServices(
         this IServiceCollection services,
-        IEnumerable<Assembly> modules
+        IEnumerable<Assembly> assemblies
     )
     {
+        // Repositórios
         services.AddScoped<IOrderRepository, OrderRepository>();
-        services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IUsersRepository, UsersRepository>();
+
+        // Criptografia de Senhas
         services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
 
+        // Contextos HTTP
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<IRolesContext, RolesContext>();
         services.AddScoped<ITenantContext, TenantContext>();
 
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies([.. modules]));
-        services.AddValidatorsFromAssemblies(modules);
-
+        // MediatR e Validação
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies([.. assemblies]));
+        services.AddValidatorsFromAssemblies(assemblies);
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-        services.AddAutoMapper(cfg => cfg.AddMaps(modules));
+        // AutoMapper
+        services.AddAutoMapper(cfg => cfg.AddMaps(assemblies));
 
         return services;
     }
