@@ -16,7 +16,6 @@ public class RolesContext(IHttpContextAccessor accessor) : IRolesContext
             {
                 return UserRoles.Default;
             }
-
             return roleString.ToUserRolesEnum();
         }
     }

@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using Shared.Domain.Enums;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Shared.Domain.Enums;
 
 namespace Shared.Infrastructure.Middlewares;
 
+/// <summary>
+/// Salva o ID do locatário no contexto HTTP a partir do token JWT.
+/// </summary>
 public class TenantMiddleware(RequestDelegate next)
 {
     public async Task InvokeAsync(HttpContext context)
@@ -15,7 +18,6 @@ public class TenantMiddleware(RequestDelegate next)
             string token = authHeader["Bearer ".Length..];
             JwtSecurityTokenHandler handler = new();
             JwtSecurityToken jwtToken = handler.ReadJwtToken(token);
-
             Claim? tenantClaim = jwtToken.Claims.FirstOrDefault(c =>
                 c.Type == CustomClaimTypes.TenantId
             );
@@ -25,7 +27,6 @@ public class TenantMiddleware(RequestDelegate next)
                 context.Items["TenantId"] = tenantClaim.Value;
             }
         }
-
         await next(context);
     }
 }

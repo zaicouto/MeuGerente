@@ -33,12 +33,18 @@ public abstract class EntityBase
     [BsonRepresentation(BsonType.Boolean)]
     public bool IsDeleted { get; set; } = false;
 
+    /// <summary>
+    /// Exclui a entidade logicamente, marcando-a como excluída.
+    /// </summary>
     public void SoftDelete()
     {
         IsDeleted = true;
         UpdatedAt = DateTime.UtcNow;
     }
 
+    /// <summary>
+    /// Atualiza os timestamps de atualização da entidade.
+    /// </summary>
     public void UpdateTimestamps()
     {
         UpdatedAt = DateTime.UtcNow;

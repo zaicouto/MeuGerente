@@ -5,7 +5,7 @@ using MongoDB.Bson;
 
 namespace Modules.Users.Application.Commands;
 
-public class CreateUserCommandHandler(IUsersRepository authRepository, IPasswordHasher hasher)
+public class CreateUserCommandHandler(IUsersRepository userRepository, IPasswordHasher hasher)
     : IRequestHandler<CreateUserCommand, string>
 {
     public async Task<string> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -21,8 +21,7 @@ public class CreateUserCommandHandler(IUsersRepository authRepository, IPassword
         };
         user.UpdateTimestamps();
         user.SetPassword(request.Password, hasher);
-
-        await authRepository.InsertAsync(user);
+        await userRepository.InsertAsync(user);
         return user.Id;
     }
 }

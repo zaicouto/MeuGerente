@@ -25,7 +25,6 @@ public class ValidationBehavior<TRequest, TResponse>(
                 .SelectMany(r => r.Errors)
                 .Where(f => f != null),
         ];
-
         if (failures.Count > 0)
             throw new ValidationException(failures);
 

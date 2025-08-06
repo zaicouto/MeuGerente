@@ -23,9 +23,7 @@ public static class UsersDbSeeder
             // Already populated. It skips and does nothing.
             return;
         }
-
         IPasswordHasher hasher = new BcryptPasswordHasher();
-
         User admin = new()
         {
             Id = ObjectId.GenerateNewId().ToString(),
@@ -37,7 +35,6 @@ public static class UsersDbSeeder
         };
         admin.UpdateTimestamps();
         admin.SetPassword(SuperAdminCreds.Password, hasher);
-
         string tenantId = ObjectId.GenerateNewId().ToString();
         User user1 = new()
         {
@@ -50,7 +47,6 @@ public static class UsersDbSeeder
         };
         user1.UpdateTimestamps();
         user1.SetPassword("Pass@12345", hasher);
-
         User user2 = new()
         {
             Id = ObjectId.GenerateNewId().ToString(),
@@ -62,7 +58,6 @@ public static class UsersDbSeeder
         };
         user2.UpdateTimestamps();
         user2.SetPassword("Pass@12345", hasher);
-
         List<User> fakeUsers = [admin, user1, user2];
         await context.Users.InsertManyAsync(fakeUsers);
     }

@@ -18,15 +18,12 @@ public class GetAllOrdersQueryHandler(IOrderRepository orderRepository, IMapper 
     {
         request.PageNumber = Math.Clamp(request.PageNumber, 1, 1000);
         request.PageSize = Math.Clamp(request.PageSize, 1, 100);
-
         PaginatedList<Order> paginated = await orderRepository.GetAllAsync(
             request.PageNumber,
             request.PageSize,
             cancellationToken
         );
-
         List<OrderResponseDto> dtoList = mapper.Map<List<OrderResponseDto>>(paginated.Items);
-
         return new PaginatedList<OrderResponseDto>(
             dtoList,
             paginated.TotalCount,

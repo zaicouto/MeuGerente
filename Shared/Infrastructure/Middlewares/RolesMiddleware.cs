@@ -5,6 +5,9 @@ using Shared.Domain.Enums;
 
 namespace Shared.Infrastructure.Middlewares;
 
+/// <summary>
+/// Salva o papel do usuário no contexto HTTP a partir do token JWT.
+/// </summary>
 public class RolesMiddleware(RequestDelegate next)
 {
     public async Task InvokeAsync(HttpContext context)
@@ -15,7 +18,6 @@ public class RolesMiddleware(RequestDelegate next)
             string token = authHeader["Bearer ".Length..];
             JwtSecurityTokenHandler handler = new();
             JwtSecurityToken jwtToken = handler.ReadJwtToken(token);
-
             Claim? roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Role);
             Console.WriteLine("Role do token : " + roleClaim);
             if (roleClaim != null)
@@ -23,7 +25,6 @@ public class RolesMiddleware(RequestDelegate next)
                 context.Items["Role"] = roleClaim.Value;
             }
         }
-
         await next(context);
     }
 }

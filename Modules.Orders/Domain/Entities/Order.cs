@@ -48,7 +48,6 @@ public class Order : EntityBaseWithTenant
                     "Não é possível voltar de Confirmado para Pendente."
                 );
         }
-
         Status = newStatus;
     }
 

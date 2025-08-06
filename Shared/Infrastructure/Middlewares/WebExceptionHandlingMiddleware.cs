@@ -7,6 +7,9 @@ using Shared.Domain.Exceptions;
 
 namespace Shared.Infrastructure.Middlewares;
 
+/// <summary>
+/// Middleware que captura exceções de requisição web e formata a resposta de erro.
+/// </summary>
 public class WebExceptionHandlingMiddleware(
     RequestDelegate next,
     ILogger<WebExceptionHandlingMiddleware> logger
@@ -35,7 +38,6 @@ public class WebExceptionHandlingMiddleware(
             {
                 logger.LogError(ex, "Aconteceu uma exceção não tratada.");
             }
-
             await HandleExceptionAsync(context, ex);
         }
     }
@@ -44,7 +46,6 @@ public class WebExceptionHandlingMiddleware(
     {
         HttpStatusCode status;
         string title;
-
         switch (exception)
         {
             case NotFoundException:
@@ -77,7 +78,6 @@ public class WebExceptionHandlingMiddleware(
                 title = "Internal Server Error";
                 break;
         }
-
         ProblemDetails problemDetails = new ProblemDetails
         {
             Type = $"https://httpstatuses.io/{(int)status}",
@@ -86,10 +86,8 @@ public class WebExceptionHandlingMiddleware(
             Detail = exception.Message,
             Instance = context.Request.Path,
         };
-
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)status;
-
         return context.Response.WriteAsJsonAsync(
             new ApiResponse(false, "Uma exceção web foi lançada.", problemDetails)
         );

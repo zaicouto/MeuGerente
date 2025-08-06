@@ -28,7 +28,6 @@ public class UpdateOrderCommandHandler(IOrderRepository orderRepository, IRolesC
                 }),
             ]
         );
-
         await orderRepository.UpdateAsync(order);
     }
 }

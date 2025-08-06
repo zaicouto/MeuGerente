@@ -6,6 +6,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace Shared.Infrastructure.Filters;
 
+/// <summary>
+/// Filtro de ação que permite a execução apenas em ambientes de desenvolvimento.
+/// </summary>
 public class DevOnlyAttribute : ActionFilterAttribute
 {
     public override void OnActionExecuting(ActionExecutingContext context)

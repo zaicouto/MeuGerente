@@ -9,7 +9,6 @@ namespace Modules.Orders.Infrastructure.Repositories;
 public class OrderRepository(OrdersDbContext context) : IOrderRepository
 {
     private readonly IMongoCollection<Order> _orders = context.Orders;
-
     public IMongoCollection<Order> Collection => _orders;
 
     public async Task InsertAsync(Order order)

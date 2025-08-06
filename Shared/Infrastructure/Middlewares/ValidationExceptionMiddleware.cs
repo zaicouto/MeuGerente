@@ -5,6 +5,9 @@ using Shared.Application.DTOs;
 
 namespace Shared.Infrastructure.Middlewares;
 
+/// <summary>
+/// Middleware que captura exceções de validação e formata a resposta de erro.
+/// </summary>
 public class ValidationExceptionMiddleware(
     RequestDelegate next,
     ILogger<ValidationExceptionMiddleware> logger
@@ -24,10 +27,8 @@ public class ValidationExceptionMiddleware(
                 context.Request.Path,
                 context.Request.Method
             );
-
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             context.Response.ContentType = "application/json";
-
             Dictionary<string, string[]> errors = ex
                 .Errors.GroupBy(e => e.PropertyName)
                 .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
@@ -45,10 +46,8 @@ public class ValidationExceptionMiddleware(
                 context.Request.Path,
                 context.Request.Method
             );
-
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             context.Response.ContentType = "application/json";
-
             var response = new
             {
                 Error = "Ocorreu um erro inesperado. Tente novamente mais tarde.",

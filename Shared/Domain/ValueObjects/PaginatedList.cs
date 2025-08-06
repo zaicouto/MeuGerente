@@ -39,7 +39,6 @@ public class PaginatedList<T>
             filter,
             cancellationToken: cancellationToken
         );
-
         List<T> items = await collection
             .Find(filter)
             .Skip((pageNumber - 1) * pageSize)

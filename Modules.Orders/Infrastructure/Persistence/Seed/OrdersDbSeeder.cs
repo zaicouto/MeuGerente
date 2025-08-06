@@ -22,9 +22,7 @@ public static class OrdersDbSeeder
             // Already populated. It skips and does nothing.
             return;
         }
-
         string tenantId = SuperAdminCreds.TenantId;
-
         Order order1 = new()
         {
             Id = "6891203936402f6df75d76ee",
@@ -52,7 +50,6 @@ public static class OrdersDbSeeder
                 },
             ]
         );
-
         Order order2 = new()
         {
             Id = "6891203936402f6df75d76ea",
@@ -80,7 +77,6 @@ public static class OrdersDbSeeder
                 },
             ]
         );
-
         Order order3 = new()
         {
             Id = ObjectId.GenerateNewId().ToString(),
@@ -109,7 +105,6 @@ public static class OrdersDbSeeder
                 },
             ]
         );
-
         List<Order> fakeOrders = [order1, order2, order3];
         await context.Orders.InsertManyAsync(fakeOrders);
     }

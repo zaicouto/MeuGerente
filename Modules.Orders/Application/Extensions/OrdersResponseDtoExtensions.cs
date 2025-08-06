@@ -9,17 +9,17 @@ public static class OrdersResponseDtoExtensions
         this PaginatedList<OrderResponseDto> paginated
     )
     {
-        List<OrderResponseWithoutTenantIdDto> items = paginated
-            .Items.Select(order => new OrderResponseWithoutTenantIdDto
+        List<OrderResponseWithoutTenantIdDto> items =
+        [
+            .. paginated.Items.Select(order => new OrderResponseWithoutTenantIdDto
             {
                 Id = order.Id,
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
                 Status = order.Status,
                 Items = order.Items,
-            })
-            .ToList();
-
+            }),
+        ];
         return new PaginatedOrdersResponseDto
         {
             TenantId = paginated.Items.Count > 0 ? paginated.Items[0].TenantId : string.Empty,

@@ -1,5 +1,8 @@
 ﻿namespace Shared.Domain.Enums;
 
+/// <summary>
+/// Credenciais do Super Admin.
+/// </summary>
 public static class SuperAdminCreds
 {
     public const string FirstName = "Admin";
@@ -9,16 +12,32 @@ public static class SuperAdminCreds
     public const string TenantId = "688d84098c4a334a6a5f0afa";
     public const UserRoles Role = UserRoles.SuperAdmin;
 
-    public static bool IsValid(string username, string password)
+    /// <summary>
+    /// Valida as credenciais do Super Admin.
+    /// </summary>
+    /// <param name="email">E-mail de super admin.</param>
+    /// <param name="password">Senha de super admin.</param>
+    /// <returns>True ou false.</returns>
+    public static bool IsValid(string email, string password)
     {
-        return username == Email && password == Password;
+        return email == Email && password == Password;
     }
 
-    public static bool IsValidUsername(string username)
+    /// <summary>
+    /// Valida se é o e-mail do Super Admin.
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns>True ou false.</returns>
+    public static bool IsValidEmail(string email)
     {
-        return username == Email;
+        return email == Email;
     }
 
+    /// <summary>
+    /// Valida se é a senha do Super Admin.
+    /// </summary>
+    /// <param name="password"></param>
+    /// <returns>True ou false.</returns>
     public static bool IsValidPassword(string password)
     {
         return password == Password;

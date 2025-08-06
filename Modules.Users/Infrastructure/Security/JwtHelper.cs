@@ -6,8 +6,19 @@ using Shared.Domain.Enums;
 
 namespace Modules.Users.Infrastructure.Security;
 
+/// <summary>
+/// Utilitário para geração de tokens JWT.
+/// </summary>
 public class JwtHelper
 {
+    /// <summary>
+    /// Gera um token JWT com base no email, tenantId e role do usuário.
+    /// </summary>
+    /// <param name="email">E-mail do usuário.</param>
+    /// <param name="tenantId">ID do locatário.</param>
+    /// <param name="role">Nível de acesso do usuário.</param>
+    /// <returns>Token JWT gerado.</returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public static string GenerateJwtToken(
         string email,
         string tenantId,
@@ -21,16 +32,13 @@ public class JwtHelper
             new(CustomClaimTypes.TenantId, tenantId),
             new(CustomClaimTypes.Role, role.ToString().ToLower()),
         ];
-
         string? jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
         if (string.IsNullOrEmpty(jwtKey))
         {
             throw new InvalidOperationException("JWT_KEY environment variable is not set.");
         }
-
         SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(jwtKey));
         SigningCredentials creds = new(key, SecurityAlgorithms.HmacSha256);
-
         JwtSecurityToken token = new(
             issuer: Environment.GetEnvironmentVariable("JWT_ISSUER"),
             audience: Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
@@ -40,7 +48,6 @@ public class JwtHelper
             ),
             signingCredentials: creds
         );
-
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
