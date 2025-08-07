@@ -47,7 +47,7 @@ public class AuthController(
         {
             string adminTenantId = SuperAdminCreds.TenantId;
             token = JwtHelper.GenerateJwtToken(dto.Email, adminTenantId, UserRoles.SuperAdmin);
-            logger.LogInformation("Login de SuperAdmin realizado com sucesso: {Email}.", dto.Email);
+            logger.LogInformation("SuperAdmin login successful: {Email}.", dto.Email);
             return Ok(new LoginResponseDto(adminTenantId, token));
         }
 #endif
@@ -59,7 +59,7 @@ public class AuthController(
         }
 
         token = JwtHelper.GenerateJwtToken(dto.Email, user.TenantId);
-        logger.LogInformation("Login realizado com sucesso: {Email}.", dto.Email);
+        logger.LogInformation("Login successful: {Email}.", dto.Email);
         return Ok(new LoginResponseDto(user.TenantId, token));
     }
 }

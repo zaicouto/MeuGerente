@@ -1,8 +1,8 @@
-﻿using Serilog;
+﻿using System.Net;
+using System.Reflection;
+using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
-using System.Net;
-using System.Reflection;
 
 namespace CoreAPI.Extensions;
 
@@ -27,6 +27,11 @@ public static class LoggingExtensions
                 "SYSTEM_EMAIL_SERVER environment variable is not set."
             );
         Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .MinimumLevel.Override("System", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+            .MinimumLevel.Override("LuckyPennySoftware", LogEventLevel.Error)
             .Enrich.FromLogContext()
             .Enrich.WithProperty("Application", appName)
             .Enrich.WithProperty(
@@ -34,7 +39,7 @@ public static class LoggingExtensions
                 Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
             )
             .WriteTo.Console(
-                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}"
+                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
             )
             .WriteTo.File(
                 new CompactJsonFormatter(),
@@ -52,7 +57,6 @@ public static class LoggingExtensions
                 restrictedToMinimumLevel: LogEventLevel.Error
             )
             .CreateLogger();
-
         builder.Host.UseSerilog();
     }
 }

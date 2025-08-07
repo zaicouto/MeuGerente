@@ -27,7 +27,7 @@ public class ValidationBehavior<TRequest, TResponse>(
         ];
         if (failures.Count > 0)
             throw new ValidationException(failures);
-        logger.LogInformation("Requisição {RequestType} validada.", typeof(TRequest).Name);
+        logger.LogInformation("Request {RequestType} validated.", typeof(TRequest).Name);
         return await next(CancellationToken.None);
     }
 }

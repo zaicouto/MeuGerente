@@ -20,7 +20,7 @@ public class ValidationExceptionMiddleware(
         }
         catch (ValidationException ex)
         {
-            logger.Warning(
+            logger.Information(
                 "ValidationException: {Errors} | Path={Path} | Method={Method}",
                 ex.Errors.Select(e => new { e.PropertyName, e.ErrorMessage }),
                 context.Request.Path,
@@ -31,29 +31,14 @@ public class ValidationExceptionMiddleware(
             Dictionary<string, string[]> errors = ex
                 .Errors.GroupBy(e => e.PropertyName)
                 .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
-
             var response = new { Errors = errors };
             await context.Response.WriteAsJsonAsync(
                 new ApiResponse(false, "A validação falhou.", response)
             );
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            logger.Error(
-                ex,
-                "Unhandled exception at {Path} | Method={Method}",
-                context.Request.Path,
-                context.Request.Method
-            );
-            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            context.Response.ContentType = "application/json";
-            var response = new
-            {
-                Error = "Ocorreu um erro inesperado. Tente novamente mais tarde.",
-            };
-            await context.Response.WriteAsJsonAsync(
-                new ApiResponse(false, "Um erro inesperado aconteceu.", response)
-            );
+            throw;
         }
     }
 }

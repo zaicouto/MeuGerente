@@ -31,11 +31,11 @@ public class WebExceptionHandlingMiddleware(
                     or ConflictException
             )
             {
-                logger.Warning(ex, "Aconteceu uma exceção de requisição web.");
+                logger.Information(ex, "A web request exception was thrown.");
             }
             else
             {
-                logger.Error(ex, "Aconteceu uma exceção não tratada.");
+                logger.Error(ex, "An unhandled exception was thrown.");
             }
             await HandleExceptionAsync(context, ex);
         }

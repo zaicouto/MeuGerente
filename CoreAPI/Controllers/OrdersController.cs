@@ -32,7 +32,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     public async Task<IActionResult> CreateAsync([FromBody] CreateOrderCommand command)
     {
         string id = await mediator.Send(command);
-        logger.LogInformation("Pedido criado com ID: {OrderId}.", id);
+        logger.LogInformation("Order created with ID: {OrderId}.", id);
         return Ok(new { NewOrderId = id });
     }
 
@@ -54,7 +54,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     {
         command.OrderId = orderId;
         await mediator.Send(command);
-        logger.LogInformation("Pedido atualizado com ID: {OrderId}.", orderId);
+        logger.LogInformation("Order updated with ID: {OrderId}.", orderId);
         return Ok(new { UpdatedOrder = true });
     }
 
@@ -72,7 +72,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     public async Task<IActionResult> SoftDeleteAsync([FromRoute] string orderId)
     {
         await mediator.Send(new SoftDeleteOrderCommand(orderId));
-        logger.LogInformation("Pedido marcado como excluído com ID: {OrderId}.", orderId);
+        logger.LogInformation("Request marked as deleted with ID: {OrderId}.", orderId);
         return Ok(new { DeletedOrder = true });
     }
 
@@ -93,12 +93,12 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
         [FromQuery] OrderStatus? status = null
     )
     {
-        Console.WriteLine(status);
+        Console.WriteLine("[FromQuery] status: " + status);
         PaginatedOrdersResponseDto orders = await mediator.Send(
             new GetAllOrdersQuery(pageNumber, pageSize)
         );
         logger.LogInformation(
-            "Encontrados {OrderCount} pedidos para a página {PageNumber} com {PageSize} itens por página.",
+            "Found {OrderCount} orders for page {PageNumber} with {PageSize} items per page.",
             orders.TotalCount,
             pageNumber,
             pageSize
@@ -120,7 +120,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     public async Task<IActionResult> GetByIdAsync([FromRoute] string orderId)
     {
         OrderResponseDto order = await mediator.Send(new GetOrderByIdQuery(orderId));
-        logger.LogInformation("Pedido encontrado com ID: {OrderId}.", orderId);
+        logger.LogInformation("Order found with ID: {OrderId}.", orderId);
         return Ok(new { order });
     }
 
@@ -139,7 +139,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     {
         await OrdersDbSeeder.TruncateAsync(context);
         await OrdersDbSeeder.SeedAsync(context);
-        logger.LogInformation("Coleção de pedidos reiniciada.");
+        logger.LogInformation("Orders collection reseted.");
         return Ok(new { Result = "Reinício da coleção de pedidos finalizada!" });
     }
 }
