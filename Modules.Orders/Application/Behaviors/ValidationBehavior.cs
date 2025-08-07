@@ -1,12 +1,13 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Modules.Orders.Application.Behaviors;
 
 public class ValidationBehavior<TRequest, TResponse>(
     IEnumerable<IValidator<TRequest>> validators,
-    Serilog.ILogger logger
+    ILogger<ValidationBehavior<TRequest, TResponse>> logger
 ) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
@@ -26,8 +27,7 @@ public class ValidationBehavior<TRequest, TResponse>(
         ];
         if (failures.Count > 0)
             throw new ValidationException(failures);
-
-        logger.Information("Requisição {RequestType} validada.", typeof(TRequest).Name);
+        logger.LogInformation("Requisição {RequestType} validada.", typeof(TRequest).Name);
         return await next(CancellationToken.None);
     }
 }

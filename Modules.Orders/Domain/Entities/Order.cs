@@ -1,4 +1,5 @@
 ﻿using Modules.Orders.Domain.Enums;
+using Modules.Orders.Domain.Exceptions;
 using MongoDB.Bson.Serialization.Attributes;
 using Shared.Domain.Abstractions;
 
@@ -28,23 +29,21 @@ public class Order : EntityBaseWithTenant
     /// Atualiza o status do pedido, validando transições.
     /// </summary>
     /// <param name="newStatus">Novo status.</param>
-    /// <exception cref="InvalidOperationException">Lança se a transição não for permitida.</exception>
+    /// <exception cref="OrderBadRequestException">Lança se a transição não for permitida.</exception>
     public void UpdateStatus(OrderStatus newStatus, bool isAdmin = false)
     {
         if (!isAdmin)
         {
             if (Status == OrderStatus.Delivered)
-                throw new InvalidOperationException(
+                throw new OrderBadRequestException(
                     "Não é possível alterar o status de um pedido já entregue."
                 );
-
             if (Status == OrderStatus.Cancelled)
-                throw new InvalidOperationException(
+                throw new OrderBadRequestException(
                     "Não é possível alterar o status de um pedido cancelado."
                 );
-
             if (Status == OrderStatus.Confirmed && newStatus == OrderStatus.Pending)
-                throw new InvalidOperationException(
+                throw new OrderBadRequestException(
                     "Não é possível voltar de Confirmado para Pendente."
                 );
         }

@@ -16,7 +16,7 @@ namespace CoreAPI.Controllers;
 public class AuthController(
     IMediator mediator,
     IPasswordHasher hasher,
-    Serilog.ILogger logger
+    ILogger<AuthController> logger
 ) : ApiControllerBase
 {
     /// <summary>
@@ -47,7 +47,7 @@ public class AuthController(
         {
             string adminTenantId = SuperAdminCreds.TenantId;
             token = JwtHelper.GenerateJwtToken(dto.Email, adminTenantId, UserRoles.SuperAdmin);
-            logger.Information("Login de SuperAdmin realizado com sucesso: {Email}.", dto.Email);
+            logger.LogInformation("Login de SuperAdmin realizado com sucesso: {Email}.", dto.Email);
             return Ok(new LoginResponseDto(adminTenantId, token));
         }
 #endif
@@ -59,7 +59,7 @@ public class AuthController(
         }
 
         token = JwtHelper.GenerateJwtToken(dto.Email, user.TenantId);
-        logger.Information("Login realizado com sucesso: {Email}.", dto.Email);
+        logger.LogInformation("Login realizado com sucesso: {Email}.", dto.Email);
         return Ok(new LoginResponseDto(user.TenantId, token));
     }
 }

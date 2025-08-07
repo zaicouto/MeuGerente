@@ -28,14 +28,14 @@ public class JwtHelper
         Claim[] claims =
         [
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(CustomClaimTypes.Email, email),
+            new(ClaimTypes.Email, email),
+            new(ClaimTypes.Role, role.ToString().ToLower()),
             new(CustomClaimTypes.TenantId, tenantId),
-            new(CustomClaimTypes.Role, role.ToString().ToLower()),
         ];
         string? jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
         if (string.IsNullOrEmpty(jwtKey))
         {
-            throw new InvalidOperationException("JWT_KEY environment variable is not set.");
+            throw new InvalidOperationException("JWT_KEY não está definido.");
         }
         SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(jwtKey));
         SigningCredentials creds = new(key, SecurityAlgorithms.HmacSha256);
