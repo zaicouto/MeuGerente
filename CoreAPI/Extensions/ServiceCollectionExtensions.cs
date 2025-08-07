@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Modules.Orders.Application.Behaviors;
 using Modules.Orders.Domain.Interfaces;
@@ -9,6 +8,7 @@ using Modules.Users.Infrastructure.Repositories;
 using Modules.Users.Infrastructure.Security;
 using Shared.Domain.Interfaces;
 using Shared.Infrastructure.Contexts;
+using System.Reflection;
 
 namespace CoreAPI.Extensions;
 

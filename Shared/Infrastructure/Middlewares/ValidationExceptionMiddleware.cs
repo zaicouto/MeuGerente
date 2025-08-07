@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Shared.Application.DTOs;
 
 namespace Shared.Infrastructure.Middlewares;

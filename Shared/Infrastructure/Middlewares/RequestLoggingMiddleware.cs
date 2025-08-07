@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Http;
+using System.Diagnostics;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
 namespace Shared.Infrastructure.Middlewares;
 

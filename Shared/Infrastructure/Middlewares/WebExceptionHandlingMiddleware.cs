@@ -1,8 +1,8 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.DTOs;
 using Shared.Domain.Exceptions;
+using System.Net;
 
 namespace Shared.Infrastructure.Middlewares;
 

@@ -1,7 +1,7 @@
-﻿using System.Reflection;
-using System.Text.Json.Serialization;
-using CoreAPI.Extensions;
+﻿using CoreAPI.Extensions;
 using Serilog;
+using System.Reflection;
+using System.Text.Json.Serialization;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

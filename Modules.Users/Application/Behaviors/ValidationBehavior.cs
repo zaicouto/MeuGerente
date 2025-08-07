@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace Modules.Users.Application.Behaviors;
 
