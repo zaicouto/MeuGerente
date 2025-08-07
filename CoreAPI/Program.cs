@@ -7,7 +7,6 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Configura o Serilog para logging
 builder.ConfigureSerilog();
-
 builder
     .Services.AddControllers()
     .AddJsonOptions(options =>
@@ -26,14 +25,11 @@ builder.Services.AddMongoDatabase(builder.Configuration);
 IEnumerable<Assembly> modules = AppDomain
     .CurrentDomain.GetAssemblies()
     .Where(a => a.FullName!.StartsWith("Modules"));
-
 builder.Services.AddCoreServices(modules);
-
 WebApplication app = builder.Build();
-
 try
 {
-    Log.Information("Iniciando aplicação...");
+    Log.Information("Starting application...");
 
     // Passos extras para configurar o ambiente de desenvolvimento
     if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Testing")
@@ -57,14 +53,13 @@ try
     app.MapControllers();
 
     // Inicia a aplicação
-    Log.Information("Aplicação iniciada com sucesso.");
+    Log.Information("Application started successfully.");
     app.Run();
-
-    Log.Information("Aplicação finalizada com sucesso.");
+    Log.Information("Application finished successfully.");
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "Erro fatal ao iniciar a aplicação.");
+    Log.Fatal(ex, "Fatal error starting application.");
     throw;
 }
 finally

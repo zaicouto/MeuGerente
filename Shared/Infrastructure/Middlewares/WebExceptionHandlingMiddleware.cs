@@ -9,10 +9,7 @@ namespace Shared.Infrastructure.Middlewares;
 /// <summary>
 /// Middleware que captura exceções de requisição web e formata a resposta de erro.
 /// </summary>
-public class WebExceptionHandlingMiddleware(
-    RequestDelegate next,
-    Serilog.ILogger logger
-)
+public class WebExceptionHandlingMiddleware(RequestDelegate next, Serilog.ILogger logger)
 {
     public async Task Invoke(HttpContext context)
     {
@@ -51,27 +48,22 @@ public class WebExceptionHandlingMiddleware(
                 status = HttpStatusCode.NotFound;
                 title = "Resource Not Found";
                 break;
-
             case BadRequestException:
                 status = HttpStatusCode.BadRequest;
                 title = "Bad Request";
                 break;
-
             case UnauthorizedException:
                 status = HttpStatusCode.Unauthorized;
                 title = "Unauthorized";
                 break;
-
             case ForbiddenException:
                 status = HttpStatusCode.Forbidden;
                 title = "Forbidden";
                 break;
-
             case ConflictException:
                 status = HttpStatusCode.Conflict;
                 title = "Conflict";
                 break;
-
             default:
                 status = HttpStatusCode.InternalServerError;
                 title = "Internal Server Error";
