@@ -5,8 +5,6 @@ using Modules.Users.Domain.Interfaces;
 using Modules.Users.Infrastructure.Persistence;
 using Modules.Users.Infrastructure.Repositories;
 using MongoDB.Driver;
-using Shared.Domain.Interfaces;
-using Shared.Infrastructure.Contexts;
 
 namespace CoreAPI.Extensions;
 

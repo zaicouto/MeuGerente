@@ -1,8 +1,8 @@
-﻿using System.Net;
-using System.Reflection;
-using Serilog;
+﻿using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
+using System.Net;
+using System.Reflection;
 
 namespace CoreAPI.Extensions;
 
