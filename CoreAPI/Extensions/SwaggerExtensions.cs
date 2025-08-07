@@ -13,7 +13,6 @@ public static class SwaggerExtensions
             string devWebsiteUrl =
                 Environment.GetEnvironmentVariable("DEV_WEBSITE_URL")
                 ?? throw new InvalidOperationException("Variável DEV_WEBSITE_URL indefinida.");
-
             c.SwaggerDoc(
                 "v1",
                 new OpenApiInfo
@@ -29,19 +28,14 @@ public static class SwaggerExtensions
                     },
                 }
             );
-
             string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-
             if (!File.Exists(xmlPath))
                 xmlPath = Path.Combine(AppContext.BaseDirectory, "bin/Debug/net8.0", xmlFile);
-
             if (File.Exists(xmlPath))
                 c.IncludeXmlComments(xmlPath);
-
             c.EnableAnnotations();
         });
-
         return services;
     }
 }

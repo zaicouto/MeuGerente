@@ -15,7 +15,6 @@ public class UpdateOrderCommandHandler(IOrderRepository orderRepository, IUserCo
         Order order =
             await orderRepository.GetByIdAsync(request.OrderId)
             ?? throw new OrderNotFoundException();
-
         order.UpdateStatus(request.Status, userContext.IsAdmin);
         order.UpdateItems(
             [

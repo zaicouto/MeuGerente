@@ -13,7 +13,6 @@ public class SoftDeleteOrderCommandHandler(IOrderRepository orderRepository)
         Order order =
             await orderRepository.GetByIdAsync(request.OrderId)
             ?? throw new OrderNotFoundException();
-
         order.SoftDelete();
         await orderRepository.UpdateAsync(order);
     }
