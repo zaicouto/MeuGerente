@@ -21,11 +21,10 @@ public class RequestLoggingMiddleware(
         string correlationId =
             context.Request.Headers["X-Correlation-ID"].FirstOrDefault()
             ?? Guid.NewGuid().ToString();
-
         context.Response.Headers["X-Correlation-ID"] = correlationId;
         string userId = context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
         logger.Information(
-            "Request started: {Method} {Path} from {IP} | CorrelationId={CorrelationId} | UserId={UserId}",
+            "Requisição iniciada: {Method} {Path} de {IP} | CorrelationId={CorrelationId} | UserId={UserId}.",
             method,
             path,
             ip,
@@ -37,7 +36,7 @@ public class RequestLoggingMiddleware(
         int statusCode = context.Response.StatusCode;
         long elapsedMs = stopwatch.ElapsedMilliseconds;
         logger.Information(
-            "Request finished: {Method} {Path} → {StatusCode} in {ElapsedMs}ms | CorrelationId={CorrelationId} | UserId={UserId}",
+            "Requisição finalizada: {Method} {Path} → {StatusCode} em {ElapsedMs}ms | CorrelationId={CorrelationId} | UserId={UserId}.",
             method,
             path,
             statusCode,

@@ -7,10 +7,6 @@ public class TenantContext(IHttpContextAccessor accessor) : ITenantContext
 {
     public string? TenantId => accessor.HttpContext?.Items["TenantId"]?.ToString();
 
-    /// <summary>
-    /// Retorna informações sobre o contexto do locatário.
-    /// </summary>
-    /// <returns></returns>
     public string GetInfo()
     {
         HttpContext? httpContext = accessor.HttpContext;

@@ -77,7 +77,7 @@ public class WebExceptionHandlingMiddleware(
                 title = "Internal Server Error";
                 break;
         }
-        ProblemDetails problemDetails = new ProblemDetails
+        ProblemDetails problemDetails = new()
         {
             Type = $"https://httpstatuses.io/{(int)status}",
             Title = title,

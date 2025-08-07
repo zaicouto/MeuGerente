@@ -2,6 +2,10 @@
 
 namespace Shared.Domain.ValueObjects;
 
+/// <summary>
+/// Objeto de valor para uma lista paginada.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class PaginatedList<T>
 {
     public IReadOnlyList<T> Items { get; private set; } = [];

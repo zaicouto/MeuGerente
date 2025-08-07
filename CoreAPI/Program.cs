@@ -65,6 +65,7 @@ try
 catch (Exception ex)
 {
     Log.Fatal(ex, "Erro fatal ao iniciar a aplicação.");
+    throw;
 }
 finally
 {
