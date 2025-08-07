@@ -10,7 +10,7 @@ namespace Shared.Infrastructure.Middlewares;
 /// </summary>
 public class RequestLoggingMiddleware(
     RequestDelegate next,
-    ILogger<RequestLoggingMiddleware> logger
+    Serilog.ILogger logger
 )
 {
     public async Task InvokeAsync(HttpContext context)
@@ -25,7 +25,7 @@ public class RequestLoggingMiddleware(
 
         context.Response.Headers["X-Correlation-ID"] = correlationId;
         string userId = context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
-        logger.LogInformation(
+        logger.Information(
             "Request started: {Method} {Path} from {IP} | CorrelationId={CorrelationId} | UserId={UserId}",
             method,
             path,
@@ -37,7 +37,7 @@ public class RequestLoggingMiddleware(
         stopwatch.Stop();
         int statusCode = context.Response.StatusCode;
         long elapsedMs = stopwatch.ElapsedMilliseconds;
-        logger.LogInformation(
+        logger.Information(
             "Request finished: {Method} {Path} → {StatusCode} in {ElapsedMs}ms | CorrelationId={CorrelationId} | UserId={UserId}",
             method,
             path,

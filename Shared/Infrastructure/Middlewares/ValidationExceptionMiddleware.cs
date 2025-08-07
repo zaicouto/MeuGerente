@@ -10,7 +10,7 @@ namespace Shared.Infrastructure.Middlewares;
 /// </summary>
 public class ValidationExceptionMiddleware(
     RequestDelegate next,
-    ILogger<ValidationExceptionMiddleware> logger
+    Serilog.ILogger logger
 )
 {
     public async Task Invoke(HttpContext context)
@@ -21,7 +21,7 @@ public class ValidationExceptionMiddleware(
         }
         catch (ValidationException ex)
         {
-            logger.LogWarning(
+            logger.Warning(
                 "ValidationException: {Errors} | Path={Path} | Method={Method}",
                 ex.Errors.Select(e => new { e.PropertyName, e.ErrorMessage }),
                 context.Request.Path,
@@ -40,7 +40,7 @@ public class ValidationExceptionMiddleware(
         }
         catch (Exception ex)
         {
-            logger.LogError(
+            logger.Error(
                 ex,
                 "Unhandled exception at {Path} | Method={Method}",
                 context.Request.Path,

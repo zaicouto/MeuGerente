@@ -7,7 +7,7 @@ namespace Modules.Users.Application.Behaviors;
 
 public class ValidationBehavior<TRequest, TResponse>(
     IEnumerable<IValidator<TRequest>> validators,
-    ILogger<ValidationBehavior<TRequest, TResponse>> logger
+    Serilog.ILogger logger
 ) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
@@ -28,7 +28,7 @@ public class ValidationBehavior<TRequest, TResponse>(
         if (failures.Count > 0)
             throw new ValidationException(failures);
 
-        logger.LogInformation("Requisição {RequestType} validada.", typeof(TRequest).Name);
+        logger.Information("Requisição {RequestType} validada.", typeof(TRequest).Name);
         return await next(CancellationToken.None);
     }
 }

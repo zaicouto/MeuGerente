@@ -15,7 +15,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace CoreAPI.Controllers;
 
 [Route("api/orders")]
-public class OrdersController(IMediator mediator, ILogger<OrdersController> logger)
+public class OrdersController(IMediator mediator, Serilog.ILogger logger)
     : ApiControllerBase
 {
     /// <summary>
@@ -32,7 +32,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     public async Task<IActionResult> CreateAsync([FromBody] CreateOrderCommand command)
     {
         string id = await mediator.Send(command);
-        logger.LogInformation("Pedido criado com ID: {OrderId}.", id);
+        logger.Information("Pedido criado com ID: {OrderId}.", id);
         return Ok(new { NewOrderId = id });
     }
 
@@ -54,7 +54,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     {
         command.OrderId = orderId;
         await mediator.Send(command);
-        logger.LogInformation("Pedido atualizado com ID: {OrderId}.", orderId);
+        logger.Information("Pedido atualizado com ID: {OrderId}.", orderId);
         return Ok(new { UpdatedOrder = true });
     }
 
@@ -72,7 +72,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     public async Task<IActionResult> SoftDeleteAsync([FromRoute] string orderId)
     {
         await mediator.Send(new SoftDeleteOrderCommand(orderId));
-        logger.LogInformation("Pedido marcado como excluído com ID: {OrderId}.", orderId);
+        logger.Information("Pedido marcado como excluído com ID: {OrderId}.", orderId);
         return Ok(new { DeletedOrder = true });
     }
 
@@ -97,7 +97,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
         PaginatedOrdersResponseDto orders = await mediator.Send(
             new GetAllOrdersQuery(pageNumber, pageSize)
         );
-        logger.LogInformation(
+        logger.Information(
             "Encontrados {OrderCount} pedidos para a página {PageNumber} com {PageSize} itens por página.",
             orders.TotalCount,
             pageNumber,
@@ -120,7 +120,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     public async Task<IActionResult> GetByIdAsync([FromRoute] string orderId)
     {
         OrderResponseDto order = await mediator.Send(new GetOrderByIdQuery(orderId));
-        logger.LogInformation("Pedido encontrado com ID: {OrderId}.", orderId);
+        logger.Information("Pedido encontrado com ID: {OrderId}.", orderId);
         return Ok(new { order });
     }
 
@@ -139,7 +139,7 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     {
         await OrdersDbSeeder.TruncateAsync(context);
         await OrdersDbSeeder.SeedAsync(context);
-        logger.LogInformation("Coleção de pedidos reiniciada.");
+        logger.Information("Coleção de pedidos reiniciada.");
         return Ok(new { Result = "Reinício da coleção de pedidos finalizada!" });
     }
 }
