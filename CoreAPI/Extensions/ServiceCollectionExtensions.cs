@@ -28,8 +28,7 @@ public static class ServiceCollectionExtensions
 
         // Contextos HTTP
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        services.AddScoped<IRolesContext, RolesContext>();
-        services.AddScoped<ITenantContext, TenantContext>();
+        services.AddScoped<IUserContext, UserContext>();
 
         // MediatR e Validação
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies([.. assemblies]));

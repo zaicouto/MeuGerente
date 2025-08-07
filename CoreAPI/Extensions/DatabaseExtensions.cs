@@ -44,9 +44,5 @@ public static class DatabaseExtensions
         // Repositories
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IUsersRepository, UsersRepository>();
-
-        // Other Contexts
-        services.AddScoped<ITenantContext, TenantContext>();
-        services.AddScoped<IRolesContext, RolesContext>();
     }
 }

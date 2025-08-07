@@ -10,7 +10,7 @@ namespace Modules.Orders.Application.Commands;
 
 public class CreateOrderCommandHandler(
     IOrderRepository orderRepository,
-    ITenantContext tenantContext
+    IUserContext userContext
 ) : IRequestHandler<CreateOrderCommand, string>
 {
     public async Task<string> Handle(
@@ -19,7 +19,7 @@ public class CreateOrderCommandHandler(
     )
     {
         string tenantId =
-            tenantContext.TenantId
+            userContext.TenantId
             ?? throw new OrderBadRequestException("Não foi possível encontrar o ID do locatário.");
 
         Order order = new()

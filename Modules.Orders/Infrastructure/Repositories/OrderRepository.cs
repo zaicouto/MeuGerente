@@ -2,11 +2,12 @@
 using Modules.Orders.Domain.Interfaces;
 using Modules.Orders.Infrastructure.Persistence;
 using MongoDB.Driver;
+using Shared.Domain.Interfaces;
 using Shared.Domain.ValueObjects;
 
 namespace Modules.Orders.Infrastructure.Repositories;
 
-public class OrderRepository(OrdersDbContext context) : IOrderRepository
+public class OrderRepository(OrdersDbContext context, IUserContext userContext) : IOrderRepository
 {
     private readonly IMongoCollection<Order> _orders = context.Orders;
     public IMongoCollection<Order> Collection => _orders;
@@ -31,7 +32,7 @@ public class OrderRepository(OrdersDbContext context) : IOrderRepository
         CancellationToken cancellationToken
     )
     {
-        FilterDefinition<Order> filter = NotDeletedFilter(Builders<Order>.Filter.Empty);
+        FilterDefinition<Order> filter = NotDeletedFilter(Builders<Order>.Filter.Eq(x => x.TenantId, userContext.TenantId));
         IOrderedFindFluent<Order, Order> find = _orders
             .Find(filter)
             .SortByDescending(x => x.CreatedAt);

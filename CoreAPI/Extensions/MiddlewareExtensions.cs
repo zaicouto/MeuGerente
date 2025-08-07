@@ -8,10 +8,6 @@ public static class MiddlewareExtensions
 {
     public static IApplicationBuilder UseCustomMiddlewares(this IApplicationBuilder app)
     {
-        // Middlewares para autenticação e autorização
-        app.UseMiddleware<TenantMiddleware>();
-        app.UseMiddleware<RolesMiddleware>();
-
         // Middlewares para tratamento de exceções e logging
         app.UseMiddleware<RequestLoggingMiddleware>(Log.Logger);
         app.UseMiddleware<ValidationExceptionMiddleware>(Log.Logger);
@@ -33,7 +29,6 @@ public static class MiddlewareExtensions
                 }
             }
         );
-
         return app;
     }
 }

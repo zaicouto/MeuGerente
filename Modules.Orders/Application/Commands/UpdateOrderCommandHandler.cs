@@ -7,7 +7,7 @@ using Shared.Domain.Interfaces;
 
 namespace Modules.Orders.Application.Commands;
 
-public class UpdateOrderCommandHandler(IOrderRepository orderRepository, IRolesContext rolesContext)
+public class UpdateOrderCommandHandler(IOrderRepository orderRepository, IUserContext userContext)
     : IRequestHandler<UpdateOrderCommand>
 {
     public async Task Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
@@ -16,7 +16,7 @@ public class UpdateOrderCommandHandler(IOrderRepository orderRepository, IRolesC
             await orderRepository.GetByIdAsync(request.OrderId)
             ?? throw new OrderNotFoundException();
 
-        order.UpdateStatus(request.Status, rolesContext.IsAdmin);
+        order.UpdateStatus(request.Status, userContext.IsAdmin);
         order.UpdateItems(
             [
                 .. request.Items.Select(i => new OrderItem
