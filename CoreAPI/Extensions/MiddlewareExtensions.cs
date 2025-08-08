@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using Shared.Application.DTOs;
 using Shared.Domain.Exceptions;
 using Shared.Infrastructure.Middlewares;
 
@@ -6,7 +7,9 @@ namespace CoreAPI.Extensions;
 
 public static class MiddlewareExtensions
 {
-    public static IApplicationBuilder UseCustomMiddlewares(this IApplicationBuilder app)
+    public static IApplicationBuilder UseCustomMiddlewares(
+        this IApplicationBuilder app
+    )
     {
         // Middlewares para tratamento de exceções e logging
         app.UseMiddleware<RequestLoggingMiddleware>(Log.Logger);
@@ -23,9 +26,9 @@ public static class MiddlewareExtensions
                 }
                 catch (DebugException ex)
                 {
-                    Console.WriteLine(ex);
-                    context.Response.StatusCode = 500;
-                    await context.Response.WriteAsync(ex.ToString());
+                    Log.Debug(ex.Message);
+                    context.Response.StatusCode = 200;
+                    await context.Response.WriteAsJsonAsync(new ApiResponse(true, "Debug", ex));
                 }
             }
         );

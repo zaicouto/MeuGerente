@@ -59,7 +59,7 @@ public abstract class EntityBase
 public abstract class EntityBaseWithTenant : EntityBase
 {
     /// <summary>
-    /// Identificador do locatário (tenant).
+    /// Identificador do inquilino (tenant).
     /// </summary>
     [BsonElement("tenantId")]
     [BsonRepresentation(BsonType.ObjectId)]

@@ -20,7 +20,7 @@ public class CreateOrderCommandHandler(
     {
         string tenantId =
             userContext.TenantId
-            ?? throw new OrderBadRequestException("Não foi possível encontrar o ID do locatário.");
+            ?? throw new OrderBadRequestException("Não foi possível encontrar o ID do inquilino.");
         Order order = new()
         {
             Id = ObjectId.GenerateNewId().ToString(),

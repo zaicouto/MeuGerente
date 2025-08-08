@@ -37,7 +37,6 @@ public static class ServiceCollectionExtensions
 
         // AutoMapper
         services.AddAutoMapper(cfg => cfg.AddMaps(assemblies));
-
         return services;
     }
 }

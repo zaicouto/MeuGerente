@@ -1,4 +1,5 @@
 ﻿using Modules.Orders.Domain.Entities;
+using Modules.Orders.Domain.Enums;
 using MongoDB.Driver;
 using Shared.Domain.ValueObjects;
 
@@ -12,6 +13,8 @@ public interface IOrderRepository
     Task<PaginatedList<Order>> GetAllAsync(
         int pageNumber,
         int pageSize,
+        OrderStatus? status,
+        DateTime? createdAfter,
         CancellationToken cancellationToken
     );
     Task<Order?> GetByIdAsync(string id);

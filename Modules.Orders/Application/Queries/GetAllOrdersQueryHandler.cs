@@ -21,6 +21,8 @@ public class GetAllOrdersQueryHandler(IOrderRepository orderRepository, IMapper 
         PaginatedList<Order> paginated = await orderRepository.GetAllAsync(
             request.PageNumber,
             request.PageSize,
+            request.Status,
+            request.CreatedAfter,
             cancellationToken
         );
         List<OrderResponseDto> dtoList = mapper.Map<List<OrderResponseDto>>(paginated.Items);

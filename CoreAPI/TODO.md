@@ -29,11 +29,11 @@
 ---
 
 ## 📌 4. CRUD Básico
-- [ ] CRUD **Orders**
+- [x] CRUD **Orders**
   - [x] Criar pedido
   - [x] Atualizar status
   - [x] Cancelar pedido
-  - [ ] Consultar por status, período
+  - [x] Consultar por status, período
 - [ ] CRUD **Products**
   - [ ] Adicionar produto
   - [ ] Atualizar preço, estoque

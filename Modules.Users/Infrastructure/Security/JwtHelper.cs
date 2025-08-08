@@ -15,7 +15,7 @@ public class JwtHelper
     /// Gera um token JWT com base no email, tenantId e role do usuário.
     /// </summary>
     /// <param name="email">E-mail do usuário.</param>
-    /// <param name="tenantId">ID do locatário.</param>
+    /// <param name="tenantId">ID do inquilino.</param>
     /// <param name="role">Nível de acesso do usuário.</param>
     /// <returns>Token JWT gerado.</returns>
     /// <exception cref="InvalidOperationException"></exception>

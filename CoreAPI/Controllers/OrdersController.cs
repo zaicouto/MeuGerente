@@ -90,12 +90,14 @@ public class OrdersController(IMediator mediator, ILogger<OrdersController> logg
     public async Task<IActionResult> GetAllAsync(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
-        [FromQuery] OrderStatus? status = null
+        [FromQuery] OrderStatus? status = null,
+        [FromQuery] DateTime? createdAfter = null
     )
     {
-        Console.WriteLine("[FromQuery] status: " + status);
+        logger.LogInformation("[FromQuery] status: {Status}.", status);
+        logger.LogInformation("[FromQuery] created after: {CreatedAfter}.", createdAfter);
         PaginatedOrdersResponseDto orders = await mediator.Send(
-            new GetAllOrdersQuery(pageNumber, pageSize)
+            new GetAllOrdersQuery(pageNumber, pageSize, status, createdAfter)
         );
         logger.LogInformation(
             "Found {OrderCount} orders for page {PageNumber} with {PageSize} items per page.",
