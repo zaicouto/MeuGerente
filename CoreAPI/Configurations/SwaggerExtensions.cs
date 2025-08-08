@@ -1,7 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
 using System.Reflection;
 
-namespace CoreAPI.Extensions;
+namespace CoreAPI.Configurations;
 
 public static class SwaggerExtensions
 {

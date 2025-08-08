@@ -1,4 +1,4 @@
-﻿using CoreAPI.Extensions;
+﻿using CoreAPI.Configurations;
 using Serilog;
 using System.Reflection;
 using System.Text.Json.Serialization;

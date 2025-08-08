@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MongoDB.Driver;
 
-namespace CoreAPI.Extensions;
+namespace CoreAPI.Configurations;
 
 public static class HealthCheckExtensions
 {

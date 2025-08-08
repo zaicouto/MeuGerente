@@ -10,7 +10,7 @@ using Shared.Domain.Interfaces;
 using Shared.Infrastructure.Contexts;
 using System.Reflection;
 
-namespace CoreAPI.Extensions;
+namespace CoreAPI.Configurations;
 
 public static class ServiceCollectionExtensions
 {

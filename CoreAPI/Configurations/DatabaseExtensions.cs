@@ -7,7 +7,7 @@ using Modules.Users.Infrastructure.Repositories;
 using MongoDB.Driver;
 using Serilog;
 
-namespace CoreAPI.Extensions;
+namespace CoreAPI.Configurations;
 
 public static class DatabaseExtensions
 {

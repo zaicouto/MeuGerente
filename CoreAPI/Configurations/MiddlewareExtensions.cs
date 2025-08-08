@@ -3,7 +3,7 @@ using Shared.Application.DTOs;
 using Shared.Domain.Exceptions;
 using Shared.Infrastructure.Middlewares;
 
-namespace CoreAPI.Extensions;
+namespace CoreAPI.Configurations;
 
 public static class MiddlewareExtensions
 {

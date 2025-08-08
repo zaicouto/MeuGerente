@@ -3,7 +3,7 @@ using Modules.Orders.Infrastructure.Persistence.Seed;
 using Modules.Users.Infrastructure.Persistence;
 using Modules.Users.Infrastructure.Persistence.Seed;
 
-namespace CoreAPI.Extensions;
+namespace CoreAPI.Configurations;
 
 public static class SeederExtensions
 {

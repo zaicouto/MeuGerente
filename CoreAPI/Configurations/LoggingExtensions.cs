@@ -4,7 +4,7 @@ using Serilog.Formatting.Compact;
 using System.Net;
 using System.Reflection;
 
-namespace CoreAPI.Extensions;
+namespace CoreAPI.Configurations;
 
 public static class LoggingExtensions
 {
